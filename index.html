@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBAM | GenAI SEO Algorithm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Russo+One&family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E738C7',
+                        cyan: '#00E7FF',
+                        violet: '#8B16C9',
+                        dark: '#0A0A0A',
+                    },
+                    fontFamily: {
+                        bungee: ['Bungee', 'sans-serif'],
+                        russo: ['Russo One', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        'pulse-slow': {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.7 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fafafa;
+            scroll-behavior: smooth;
+        }
+        .bungee {
+            font-family: 'Bungee', sans-serif;
+            letter-spacing: 1.05em;
+        }
+        .russo {
+            font-family: 'Russo One', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .inter {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.4;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        @keyframes slideInLeft {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide-in-right {
+            animation: slideInRight 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        @keyframes slideInRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide-in-top {
+            animation: slideInTop 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        @keyframes slideInTop {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .custom-radial-gradient {
+            background: radial-gradient(ellipse at center, rgba(231, 56, 199, 0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+        .animate-delay-100 {
+            animation-delay: 100ms;
+        }
+        .animate-delay-200 {
+            animation-delay: 200ms;
+        }
+        .animate-delay-300 {
+            animation-delay: 300ms;
+        }
+        .animate-delay-400 {
+            animation-delay: 400ms;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Navigation -->
+    <header class="fixed top-0 w-full bg-white bg-opacity-90 backdrop-blur-sm z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="flex items-center">
+                        <img src="images/logo.svg" alt="SBAM Logo" class="h-8 md:h-10 w-auto">
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="flex space-x-10">
+                        <a href="#hero" class="text-dark hover:text-primary transition-colors font-medium">Home</a>
+                        <a href="#how-it-works" class="text-dark hover:text-primary transition-colors font-medium">Algo</a>
+                        <a href="#case-studies" class="text-dark hover:text-primary transition-colors font-medium">Case Studies</a>
+                        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Company</a>
+                        <a href="#cta" class="bg-primary text-white px-6 py-2.5 rounded-full font-medium hover:bg-opacity-90 transition-colors">Try Algo</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-dark">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#hero" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Home</a>
+                <a href="#how-it-works" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Algo</a>
+                <a href="#case-studies" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Case Studies</a>
+                <a href="#" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Company</a>
+                <a href="#cta" class="block px-3 py-2 bg-primary text-white rounded-md text-center font-medium hover:bg-opacity-90">Try Algo</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden custom-radial-gradient">
+        <!-- Animated background elements -->
+        <div class="absolute inset-0 overflow-hidden z-0">
+            <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-primary/10 blur-3xl parallax-element" data-depth="0.1" data-speed="0.5" style="z-index: 1;"></div>
+            <div class="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-violet/10 blur-3xl parallax-element" data-depth="0.2" data-speed="0.7" style="z-index: 1;"></div>
+            <div class="absolute bottom-1/4 left-1/3 w-48 h-48 rounded-full bg-cyan/10 blur-3xl parallax-element" data-depth="0.3" data-speed="0.9" style="z-index: 1;"></div>
+            <div class="absolute top-1/2 right-1/3 w-24 h-24 rounded-full bg-primary/10 blur-3xl parallax-element" data-depth="0.4" data-speed="0.6" style="z-index: 1;"></div>
+            
+            <!-- Grid pattern -->
+            <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 40px 40px; z-index: 1;"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center relative z-20">
+                <h1 class="russo text-4xl md:text-6xl lg:text-7xl text-dark tracking-wide slide-in-top">Be first in new-customer searches</h1>
+                <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none z-10">
+                    <div class="relative w-96 h-64 md:w-[500px] md:h-80 parallax-container">
+                        <div class="absolute top-10 left-10 w-40 h-40 bg-violet rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float parallax-element" data-depth="0.2"></div>
+                        <div class="absolute bottom-10 right-10 w-48 h-48 bg-cyan rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float animate-delay-200 parallax-element" data-depth="0.3"></div>
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-primary rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float animate-delay-400 parallax-element" data-depth="0.4"></div>
+                    </div>
+                </div>
+                <p class="inter max-w-2xl mx-auto mt-8 text-xl text-gray-700 opacity-90 fade-in animate-delay-300">Powered by the first algorithm built for GenAI and classic SEO</p>
+                <a href="#cta" class="mt-10 inline-block bg-primary hover:bg-opacity-90 transition-colors text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg fade-in animate-delay-500">Try SBAM Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted By -->
+    <section id="trusted" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <p class="text-gray-600 text-lg font-medium uppercase tracking-wider fade-in">Trusted by</p>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-10 md:gap-16">
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-100"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-200"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-300"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-400"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How Algo Works -->
+    <section id="how-it-works" class="py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">How Algo Works</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Step 1 -->
+                <div class="slide-in-left rounded-2xl bg-white p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 text-primary rounded-full font-bold text-xl">1</div>
+                        <h3 class="russo text-xl ml-4">Semantic Analysis</h3>
+                    </div>
+                    <p class="text-gray-700 mb-4 italic">Reads your content like a human, scores it like a machine.</p>
+                    <p class="text-gray-600">SBAM analyzes your text, images, metadata, and structure to extract meaning and intent, optimizing semantic alignment.</p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="slide-in-top rounded-2xl bg-white p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow animate-delay-200">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 flex items-center justify-center bg-violet bg-opacity-10 text-violet rounded-full font-bold text-xl">2</div>
+                        <h3 class="russo text-xl ml-4">Dynamic Visibility Tuning</h3>
+                    </div>
+                    <p class="text-gray-700 mb-4 italic">Adapts your site to how users and AIs search.</p>
+                    <p class="text-gray-600">The algorithm dynamically modulates how content is perceived based on user queries and generative search trends.</p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="slide-in-right rounded-2xl bg-white p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow animate-delay-400">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 flex items-center justify-center bg-cyan bg-opacity-10 text-cyan rounded-full font-bold text-xl">3</div>
+                        <h3 class="russo text-xl ml-4">Continuous Learning & Integration</h3>
+                    </div>
+                    <p class="text-gray-700 mb-4 italic">Keeps learning to stay ahead of SEO and GenAI shifts.</p>
+                    <p class="text-gray-600">Using machine learning and Google APIs, SBAM updates your site’s relevance—no hacks, just lasting authority.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-16 fade-in animate-delay-500">
+                <a href="#cta" class="inline-block bg-dark hover:bg-opacity-90 transition-colors text-white text-lg font-semibold px-8 py-4 rounded-full shadow">TRY ALGO NOW</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Studies -->
+    <section id="case-studies" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">Case Studies</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow slide-in-left">
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">"SBAM increased our organic traffic by 275% in just 3 months. Their algorithm actually understands how to optimize for AI-driven search."</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full bg-gray-200"></div>
+                            <div class="ml-4">
+                                <p class="font-medium text-dark">Alex Morgan</p>
+                                <p class="text-sm text-gray-600">TechLead, StartupX</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow slide-in-top animate-delay-200">
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">"The semantic analysis feature helped us rank for high-intent keywords we never even considered. ROI is through the roof!"</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full bg-gray-200"></div>
+                            <div class="ml-4">
+                                <p class="font-medium text-dark">Jamie Chen</p>
+                                <p class="text-sm text-gray-600">Marketing Director, BrandCo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow slide-in-top animate-delay-400">
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">"Within weeks of implementation, we started ranking #1 for generative AI queries. The competition doesn't know what hit them."</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full bg-gray-200"></div>
+                            <div class="ml-4">
+                                <p class="font-medium text-dark">Taylor Reynolds</p>
+                                <p class="text-sm text-gray-600">SEO Manager, TechGiant Inc</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">Pricing</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Tier -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow slide-in-left">
+                    <h3 class="russo text-2xl text-dark mb-4">Free</h3>
+                    <div class="flex items-end mb-6">
+                        <span class="russo text-4xl">$0</span>
+                        <span class="text-gray-600 ml-1">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-10">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Basic Semantic Analysis</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Monthly SEO Reports</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> 5 Page Optimization</li>
+                    </ul>
+                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-dark font-medium py-3 px-4 rounded-full transition-colors">Get Started</button>
+                </div>
+                
+                <!-- Growth Tier -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-primary shadow-lg transform md:-translate-y-4 slide-in-top">
+                    <div class="absolute top-0 right-0 bg-primary text-white px-4 py-1 rounded-bl-lg">POPULAR</div>
+                    <h3 class="russo text-2xl text-dark mb-4">Growth</h3>
+                    <div class="flex items-end mb-6">
+                        <span class="russo text-4xl">$50</span>
+                        <span class="text-gray-600 ml-1">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-10">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Advanced Semantic Analysis</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Weekly SEO Reports</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> 50 Page Optimization</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Dynamic Visibility Tuning</li>
+                    </ul>
+                    <button class="w-full bg-primary hover:bg-opacity-90 text-white font-medium py-3 px-4 rounded-full transition-colors">Choose Plan</button>
+                </div>
+                
+                <!-- Enterprise Tier -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow slide-in-right">
+                    <h3 class="russo text-2xl text-dark mb-4">Enterprise</h3>
+                    <div class="flex items-end mb-6">
+                        <span class="russo text-4xl">Custom</span>
+                    </div>
+                    <ul class="space-y-3 mb-10">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Full Semantic Suite</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Real-time Dashboard</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Unlimited Pages</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Continuous Learning AI</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Dedicated Support</li>
+                    </ul>
+                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-dark font-medium py-3 px-4 rounded-full transition-colors">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-24 bg-gray-50">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">Frequently Asked Questions</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- FAQ 1 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>How is SBAM different from traditional SEO tools?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">SBAM is specifically designed for the AI-powered search landscape. Traditional tools optimize for keyword matching, while SBAM optimizes for semantic meaning and intent understanding that generative AI uses to produce search results.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ 2 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>Do I need coding skills to implement SBAM?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">No coding is required. SBAM integrates seamlessly with your existing CMS through our simple plugin or API connection. Our onboarding team handles all technical aspects.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ 3 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>How quickly will I see results?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">Most customers see measurable improvements in AI search visibility within 2 weeks. Full impact on traditional search rankings typically manifests in 4-8 weeks as the learning algorithm continues to optimize.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ 4 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>What platforms does SBAM support?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">SBAM currently supports all major platforms including WordPress, Shopify, Webflow, Wix, and custom-built websites via our API. Mobile app support is coming in Q4.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta" class="py-24 bg-gradient-to-r from-[#8B16C9]/5 to-[#00E7FF]/5">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-6 slide-in-top">Ready to be the first?</h2>
+            <p class="text-xl text-gray-700 max-w-2xl mx-auto mb-12 fade-in">Join hundreds of forward-thinking companies already leveraging SBAM to dominate AI search results.</p>
+            
+            <div class="max-w-md mx-auto bg-white rounded-full shadow-lg flex p-1 fade-in animate-delay-200">
+                <input type="email" placeholder="Enter your email address" class="w-full px-6 py-4 border-0 rounded-l-full focus:outline-none">
+                <button class="bg-primary hover:bg-opacity-90 transition-colors text-white font-semibold px-8 py-4 rounded-full">Start Free Trial</button>
+            </div>
+            
+            <p class="text-sm text-gray-500 mt-4 fade-in animate-delay-400">7-day free trial. No credit card required.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 bg-dark text-gray-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div>
+                    <a href="#" class="flex items-center">
+                        <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto">
+                    </a>
+                    <p class="mt-4 max-w-xs">The future of SEO optimized for AI-powered search. Transform how search engines see your content.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold text-lg mb-4">Product</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">API</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Documentation</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold text-lg mb-4">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="hover:text-primary transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-16 pt-8 text-center md:text-left">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500">&copy; 2023 SBAM Technologies. All rights reserved.</p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('i');
+                
+                content.classList.toggle('hidden');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+
+        // Observers for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .slide-in-top').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Scroll to anchor links with offset
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.add('hidden');
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
+    <script>
+        // Initialize parallax
+        document.addEventListener('DOMContentLoaded', function() {
+            const scene = document.querySelector('.parallax-container');
+            if (scene) {
+                const parallax = new Parallax(scene, {
+                    relativeInput: true,
+                    hoverOnly: true,
+                    scalarX: 15,
+                    scalarY: 15,
+                    frictionX: 0.1,
+                    frictionY: 0.1
+                });
+            }
+
+            // Enhanced scroll parallax effect
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY;
+                const elements = document.querySelectorAll('.parallax-element');
+                
+                elements.forEach(element => {
+                    const depth = parseFloat(element.getAttribute('data-depth'));
+                    const speed = parseFloat(element.getAttribute('data-speed')) || 0.5;
+                    const yPos = -(scrollPosition * depth * speed * 0.2);
+                    const xPos = Math.sin(scrollPosition * 0.002 * speed) * 50 * depth;
+                    const scale = 1 + (scrollPosition * 0.0003 * depth);
+                    const opacity = 0.1 + (0.9 - (scrollPosition * 0.0001 * speed));
+                    element.style.transform = `translate(${xPos}px, ${yPos}px) scale(${scale})`;
+                    element.style.opacity = opacity;
+                });
+            });
+
+            // Mouse move effect
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                const elements = document.querySelectorAll('.parallax-element');
+                
+                elements.forEach((element, index) => {
+                    const depth = parseFloat(element.getAttribute('data-depth'));
+                    const xOffset = (x - 0.5) * 50 * depth;
+                    const yOffset = (y - 0.5) * 50 * depth;
+                    element.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+                });
+            });
+        });
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=gabrieledellacroce/sbam" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>
