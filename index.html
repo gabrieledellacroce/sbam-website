@@ -93,9 +93,7 @@
         @keyframes slideInTop {
             to { opacity: 1; transform: translateY(0); }
         }
-        .custom-radial-gradient {
-            background: radial-gradient(ellipse at center, rgba(231, 56, 199, 0.1) 0%, rgba(255,255,255,0) 70%);
-        }
+
         .animate-delay-100 {
             animation-delay: 100ms;
         }
@@ -108,9 +106,14 @@
         .animate-delay-400 {
             animation-delay: 400ms;
         }
+        .animate-delay-500 {
+            animation-delay: 500ms;
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
+    <!-- Cerchio che segue il mouse per tutta la pagina -->
+    <div id="mouse-follower" class="fixed w-32 h-32 bg-pink-400/40 rounded-full filter blur-xl opacity-0 pointer-events-none transition-all duration-100 ease-out z-[60]"></div>
     <!-- Navigation -->
     <header class="fixed top-0 w-full bg-white bg-opacity-90 backdrop-blur-sm z-50 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -156,30 +159,45 @@
     </header>
 
     <!-- Hero Section -->
-    <section id="hero" class="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden custom-radial-gradient">
-        <!-- Animated background elements -->
-        <div class="absolute inset-0 overflow-hidden z-0">
-            <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-primary/10 blur-3xl parallax-element" data-depth="0.1" data-speed="0.5" style="z-index: 1;"></div>
-            <div class="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-violet/10 blur-3xl parallax-element" data-depth="0.2" data-speed="0.7" style="z-index: 1;"></div>
-            <div class="absolute bottom-1/4 left-1/3 w-48 h-48 rounded-full bg-cyan/10 blur-3xl parallax-element" data-depth="0.3" data-speed="0.9" style="z-index: 1;"></div>
-            <div class="absolute top-1/2 right-1/3 w-24 h-24 rounded-full bg-primary/10 blur-3xl parallax-element" data-depth="0.4" data-speed="0.6" style="z-index: 1;"></div>
-            
-            <!-- Grid pattern -->
-            <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 40px 40px; z-index: 1;"></div>
+    <section id="hero" class="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
+        <!-- Cerchi di sfondo -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <!-- Cerchio 1: Celeste (in alto a sinistra) -->
+            <div class="absolute w-88 h-88 rounded-full bg-cyan/30 blur-xl" 
+                 style="top: 15%; left: 10%;"></div>
+            <!-- Cerchio 2: Magenta (in alto a destra) -->
+            <div class="absolute w-80 h-80 rounded-full bg-primary/30 blur-xl" 
+                 style="top: 15%; right: 10%;"></div>
+            <!-- Cerchio 3: Celeste (in basso a sinistra) -->
+            <div class="absolute w-75 h-75 rounded-full bg-cyan/35 blur-xl" 
+                 style="bottom: 15%; left: 10%;"></div>
+            <!-- Cerchio 4: Magenta (in basso a destra) -->
+            <div class="absolute w-85 h-85 rounded-full bg-primary/35 blur-xl" 
+                 style="bottom: 15%; right: 10%;"></div>
+            <!-- Cerchio 5: Viola (centrale grande) -->
+            <div class="absolute w-96 h-96 rounded-full bg-violet/30 blur-xl" 
+                 style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <!-- Cerchio 6: Magenta (centrale medio) -->
+            <div class="absolute w-47 h-47 rounded-full bg-primary/25 blur-xl" 
+                 style="top: 35%; left: 55%;"></div>
+            <!-- Cerchio 7: Viola (in basso a destra piccolo) -->
+            <div class="absolute w-32 h-32 rounded-full bg-violet/30 blur-xl" 
+                 style="bottom: 25%; right: 25%;"></div>
+            <!-- Cerchio 8: Celeste (centrale grande) -->
+            <div class="absolute w-120 h-120 rounded-full bg-cyan top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"></div>
+             <div class="absolute w-96 h-96 rounded-full bg-primary/30 blur-xl" style="top: 10%; left: 5%;"></div>
+             <div class="absolute w-72 h-72 rounded-full bg-cyan/30 blur-xl" style="top: 15%; right: 10%;"></div>
+             <div class="absolute w-80 h-80 rounded-full bg-primary/30 blur-xl" style="bottom: 10%; left: 15%;"></div>
+             <div class="absolute w-64 h-64 rounded-full bg-cyan/30 blur-xl" style="bottom: 5%; right: 20%;"></div>
+             <div class="absolute w-56 h-56 rounded-full bg-primary/30 blur-xl" style="top: 30%; left: 70%;"></div>
+             <div class="absolute w-48 h-48 rounded-full bg-cyan/30 blur-xl" style="bottom: 30%; right: 70%;"></div>
         </div>
-
+    
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center relative z-20">
-                <h1 class="russo text-4xl md:text-6xl lg:text-7xl text-dark tracking-wide slide-in-top">Be first in new-customer searches</h1>
-                <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none z-10">
-                    <div class="relative w-96 h-64 md:w-[500px] md:h-80 parallax-container">
-                        <div class="absolute top-10 left-10 w-40 h-40 bg-violet rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float parallax-element" data-depth="0.2"></div>
-                        <div class="absolute bottom-10 right-10 w-48 h-48 bg-cyan rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float animate-delay-200 parallax-element" data-depth="0.3"></div>
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-primary rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float animate-delay-400 parallax-element" data-depth="0.4"></div>
-                    </div>
-                </div>
-                <p class="inter max-w-2xl mx-auto mt-8 text-xl text-gray-700 opacity-90 fade-in animate-delay-300">Powered by the first algorithm built for GenAI and classic SEO</p>
-                <a href="#cta" class="mt-10 inline-block bg-primary hover:bg-opacity-90 transition-colors text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg fade-in animate-delay-500">Try SBAM Now</a>
+                <h1 class="russo text-4xl md:text-6xl lg:text-7xl text-dark tracking-wide">Be first in new-customer searches</h1>
+                <p class="inter max-w-2xl mx-auto mt-8 text-xl text-gray-700 opacity-90">Powered by the first algorithm built for GenAI and classic SEO</p>
+                <a href="#cta" class="mt-10 inline-block bg-primary hover:bg-opacity-90 transition-colors text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg">Try SBAM Now</a>
             </div>
         </div>
     </section>
@@ -542,53 +560,32 @@
         });
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
     <script>
-        // Initialize parallax
+        // Cerchio che segue il mouse
         document.addEventListener('DOMContentLoaded', function() {
-            const scene = document.querySelector('.parallax-container');
-            if (scene) {
-                const parallax = new Parallax(scene, {
-                    relativeInput: true,
-                    hoverOnly: true,
-                    scalarX: 15,
-                    scalarY: 15,
-                    frictionX: 0.1,
-                    frictionY: 0.1
+            const mouseFollower = document.getElementById('mouse-follower');
+            
+            if (mouseFollower) {
+                document.addEventListener('mousemove', function(e) {
+                    const x = e.clientX - 64; // -64 per centrare il cerchio (w-32 = 128px / 2)
+                    const y = e.clientY - 64;
+                    
+                    mouseFollower.style.transform = `translate(${x}px, ${y}px)`;
+                    mouseFollower.style.opacity = '0.4';
+                });
+                
+                // Nascondi il cerchio quando il mouse esce dalla finestra
+                document.addEventListener('mouseleave', function() {
+                    mouseFollower.style.opacity = '0';
+                });
+                
+                // Mostra il cerchio quando il mouse entra nella finestra
+                document.addEventListener('mouseenter', function() {
+                    mouseFollower.style.opacity = '0.4';
                 });
             }
-
-            // Enhanced scroll parallax effect
-            window.addEventListener('scroll', function() {
-                const scrollPosition = window.scrollY;
-                const elements = document.querySelectorAll('.parallax-element');
-                
-                elements.forEach(element => {
-                    const depth = parseFloat(element.getAttribute('data-depth'));
-                    const speed = parseFloat(element.getAttribute('data-speed')) || 0.5;
-                    const yPos = -(scrollPosition * depth * speed * 0.2);
-                    const xPos = Math.sin(scrollPosition * 0.002 * speed) * 50 * depth;
-                    const scale = 1 + (scrollPosition * 0.0003 * depth);
-                    const opacity = 0.1 + (0.9 - (scrollPosition * 0.0001 * speed));
-                    element.style.transform = `translate(${xPos}px, ${yPos}px) scale(${scale})`;
-                    element.style.opacity = opacity;
-                });
-            });
-
-            // Mouse move effect
-            document.addEventListener('mousemove', (e) => {
-                const x = e.clientX / window.innerWidth;
-                const y = e.clientY / window.innerHeight;
-                const elements = document.querySelectorAll('.parallax-element');
-                
-                elements.forEach((element, index) => {
-                    const depth = parseFloat(element.getAttribute('data-depth'));
-                    const xOffset = (x - 0.5) * 50 * depth;
-                    const yOffset = (y - 0.5) * 50 * depth;
-                    element.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-                });
-            });
         });
     </script>
+
 </body>
 </html>
