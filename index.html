@@ -159,7 +159,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section id="hero" class="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
+    <section id="hero" class="min-h-screen flex items-center justify-center bg-gray-50 relative">
         <!-- Cerchi di sfondo -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <!-- Cerchio 1: Celeste (in alto a sinistra) -->
@@ -437,7 +437,7 @@
     </section>
 
     <!-- CTA -->
-    <section id="cta" class="py-24 bg-gradient-to-r from-[#8B16C9]/5 to-[#00E7FF]/5 relative overflow-hidden">
+    <section id="cta" class="py-24 bg-gradient-to-r from-[#8B16C9]/5 to-[#00E7FF]/5 relative">
         <!-- Background circles -->
         <div class="absolute inset-0 overflow-hidden z-0">
             <div class="absolute top-1/4 right-1/4 w-24 h-24 md:w-64 md:h-64 rounded-full bg-primary/5 blur-3xl parallax-element" data-depth="0.1" data-speed="0.3"></div>
@@ -458,7 +458,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-16 bg-dark text-gray-300 relative overflow-hidden">
+    <footer class="py-16 bg-dark text-gray-300 relative">
         <!-- Background circles -->
         <div class="absolute inset-0 overflow-hidden z-0">
             <div class="absolute bottom-0 left-1/4 w-36 h-36 md:w-96 md:h-96 rounded-full bg-primary/3 blur-3xl parallax-element" data-depth="0.1" data-speed="0.2"></div>
@@ -587,53 +587,129 @@
                 });
             }
             
-            // Movimento dei cerchi decorativi basato sul mouse con casualità
-            const circles = document.querySelectorAll('div[class*="bg-primary"], div[class*="bg-cyan"], div[class*="bg-violet"]');
+            // Movimento dei cerchi decorativi basato sullo scroll solo su mobile
+            const circles = document.querySelectorAll('div[class*="blur-xl"]');
+            
+            // Genera parametri casuali per ogni cerchio
+            const circleParams = Array.from(circles).map((circle, index) => {
+                if (circle.id === 'mouse-follower') return null;
+                return {
+                    speed: 0.3 + Math.random() * 0.7, // Velocità casuale
+                    offsetX: (Math.random() - 0.5) * 120, // Offset casuale X
+                    offsetY: (Math.random() - 0.5) * 120, // Offset casuale Y
+                    direction: Math.random() > 0.5 ? 1 : -1, // Direzione casuale
+                    directionY: Math.random() > 0.5 ? 1 : -1, // Direzione Y separata
+                    mouseInfluence: 0.5 + Math.random() * 1.5, // Influenza del mouse
+                    crossMovement: Math.random() * 0.8, // Movimento incrociato
+                    delay: Math.random() * 0.1 // Ritardo casuale per la transizione
+                };
+            });
+            
+            // Funzione per verificare se siamo su mobile
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
+            
+            // Movimento dei cerchi: scroll su mobile, mouse su desktop
+            let ticking = false;
             let mouseX = 0;
             let mouseY = 0;
             
-            // Genera parametri casuali per ogni cerchio
-             const circleParams = Array.from(circles).map((circle, index) => {
-                 if (circle.id === 'mouse-follower') return null;
-                 return {
-                     speed: 0.05 + Math.random() * 0.08, // Velocità casuale tra 0.05 e 0.13
-                     offsetX: (Math.random() - 0.5) * 200, // Offset casuale X aumentato
-                     offsetY: (Math.random() - 0.5) * 200, // Offset casuale Y aumentato
-                     direction: Math.random() > 0.5 ? 1 : -1, // Direzione casuale
-                     delay: Math.random() * 0.2 // Ritardo casuale per la transizione
-                 };
-             });
-            
-            document.addEventListener('mousemove', function(e) {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
+            function updateCirclesOnScroll() {
+                if (!isMobile()) {
+                    return; // Su desktop usiamo il mouse, non lo scroll
+                }
+                
+                const scrollY = window.pageYOffset;
                 
                 circles.forEach((circle, index) => {
-                    // Escludi il mouse follower
-                    if (circle.id === 'mouse-follower' || !circleParams[index]) return;
+                    if (!circle || circle.id === 'mouse-follower' || !circleParams[index] || !circle.style) return;
                     
                     const params = circleParams[index];
-                    const baseX = (mouseX - window.innerWidth / 2) * params.speed * params.direction;
-                    const baseY = (mouseY - window.innerHeight / 2) * params.speed;
+                    const x = Math.round((scrollY * params.speed * params.direction) + params.offsetX * 0.2);
+                    const y = Math.round((scrollY * params.speed * 0.5) + params.offsetY * 0.2);
                     
-                    // Aggiungi movimento casuale
-                     const x = baseX + params.offsetX * 0.3;
-                     const y = baseY + params.offsetY * 0.3;
-                    
-                    circle.style.transform = `translate(${x}px, ${y}px)`;
-                    circle.style.transition = `transform ${0.2 + params.delay}s ease-out`;
+                    circle.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                    circle.style.willChange = 'transform';
                 });
+                
+                ticking = false;
+            }
+            
+            function updateCirclesOnMouse() {
+                if (isMobile()) {
+                    return; // Su mobile usiamo lo scroll, non il mouse
+                }
+                
+                circles.forEach((circle, index) => {
+                    if (!circle || circle.id === 'mouse-follower' || !circleParams[index] || !circle.style) return;
+                    
+                    const params = circleParams[index];
+                    // Movimento più dinamico e reattivo
+                    const baseX = mouseX * params.speed * 0.08 * params.direction * params.mouseInfluence;
+                    const baseY = mouseY * params.speed * 0.08 * params.directionY * params.mouseInfluence;
+                    
+                    const crossX = mouseY * params.crossMovement * 0.06 * params.direction;
+                    const crossY = mouseX * params.crossMovement * 0.07 * params.directionY;
+                    
+                    const x = Math.round(baseX + crossX + params.offsetX * 0.4);
+                    const y = Math.round(baseY + crossY + params.offsetY * 0.4);
+                    
+                    circle.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                    circle.style.willChange = 'transform';
+                });
+            }
+            
+            // Event listener per lo scroll con throttling
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(function() {
+                        try {
+                            updateCirclesOnScroll();
+                        } catch (error) {
+                            console.warn('Errore nell\'animazione dei cerchi:', error);
+                            ticking = false;
+                        }
+                    });
+                    ticking = true;
+                }
             });
             
-            // Reset posizione quando il mouse esce dalla finestra
-            document.addEventListener('mouseleave', function() {
-                circles.forEach((circle, index) => {
-                    if (circle.id === 'mouse-follower' || !circleParams[index]) return;
-                    const params = circleParams[index];
-                    circle.style.transform = 'translate(0px, 0px)';
-                    circle.style.transition = `transform ${0.5 + params.delay}s ease-out`;
-                });
+            // Event listener per il mouse su desktop
+            document.addEventListener('mousemove', function(e) {
+                if (!isMobile()) {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    updateCirclesOnMouse();
+                }
             });
+            
+            // Event listener per il resize per gestire il cambio da mobile a desktop
+            window.addEventListener('resize', function() {
+                try {
+                    if (isMobile()) {
+                        updateCirclesOnScroll();
+                    } else {
+                        updateCirclesOnMouse();
+                    }
+                } catch (error) {
+                    console.warn('Errore nel resize dei cerchi:', error);
+                }
+            });
+            
+            // Debug e inizializzazione sicura
+            console.log('Cerchi trovati:', circles.length);
+            console.log('Mobile detected:', isMobile());
+            
+            try {
+                if (isMobile()) {
+                    updateCirclesOnScroll();
+                } else {
+                    updateCirclesOnMouse();
+                }
+            } catch (error) {
+                console.warn('Errore nell\'inizializzazione dei cerchi:', error);
+            }
         });
     </script>
 
