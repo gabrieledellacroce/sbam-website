@@ -163,34 +163,36 @@
         <!-- Cerchi di sfondo -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <!-- Cerchio 1: Celeste (in alto a sinistra) -->
-            <div class="absolute w-88 h-88 rounded-full bg-cyan/30 blur-xl" 
-                 style="top: 15%; left: 10%;"></div>
+            <div class="absolute w-88 h-88 rounded-full bg-cyan/60 blur-xl" 
+                 style="top: 15%; left: 10%; z-index: 5;"></div>
             <!-- Cerchio 2: Magenta (in alto a destra) -->
             <div class="absolute w-80 h-80 rounded-full bg-primary/30 blur-xl" 
                  style="top: 15%; right: 10%;"></div>
             <!-- Cerchio 3: Celeste (in basso a sinistra) -->
-            <div class="absolute w-75 h-75 rounded-full bg-cyan/35 blur-xl" 
-                 style="bottom: 15%; left: 10%;"></div>
+            <div class="absolute w-75 h-75 rounded-full bg-cyan/60 blur-xl" 
+                 style="bottom: 15%; left: 10%; z-index: 5;"></div>
             <!-- Cerchio 4: Magenta (in basso a destra) -->
             <div class="absolute w-85 h-85 rounded-full bg-primary/35 blur-xl" 
                  style="bottom: 15%; right: 10%;"></div>
             <!-- Cerchio 5: Viola (centrale grande) -->
-            <div class="absolute w-96 h-96 rounded-full bg-violet/30 blur-xl" 
-                 style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <div class="absolute w-77 h-77 rounded-full bg-violet/30 blur-xl" 
+                 style="top: 50%; left: 25%; transform: translate(-50%, -50%);"></div>
             <!-- Cerchio 6: Magenta (centrale medio) -->
             <div class="absolute w-47 h-47 rounded-full bg-primary/25 blur-xl" 
                  style="top: 35%; left: 55%;"></div>
             <!-- Cerchio 7: Viola (in basso a destra piccolo) -->
             <div class="absolute w-32 h-32 rounded-full bg-violet/30 blur-xl" 
                  style="bottom: 25%; right: 25%;"></div>
-            <!-- Cerchio 8: Celeste (centrale grande) -->
-            <div class="absolute w-120 h-120 rounded-full bg-cyan top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"></div>
-             <div class="absolute w-96 h-96 rounded-full bg-primary/30 blur-xl" style="top: 10%; left: 5%;"></div>
-             <div class="absolute w-72 h-72 rounded-full bg-cyan/30 blur-xl" style="top: 15%; right: 10%;"></div>
-             <div class="absolute w-80 h-80 rounded-full bg-primary/30 blur-xl" style="bottom: 10%; left: 15%;"></div>
-             <div class="absolute w-64 h-64 rounded-full bg-cyan/30 blur-xl" style="bottom: 5%; right: 20%;"></div>
-             <div class="absolute w-56 h-56 rounded-full bg-primary/30 blur-xl" style="top: 30%; left: 70%;"></div>
-             <div class="absolute w-48 h-48 rounded-full bg-cyan/30 blur-xl" style="bottom: 30%; right: 70%;"></div>
+            <!-- Cerchio 1: Magenta (ridotto del 35%) -->
+            <div class="absolute w-62 h-62 rounded-full bg-primary/30 blur-xl" style="top: 10%; left: 5%;"></div>
+            <!-- Cerchio 2: Celeste (ridotto del 35%) -->
+            <div class="absolute w-47 h-47 rounded-full bg-cyan/60 blur-xl" style="top: 15%; right: 10%; z-index: 5;"></div>
+            <!-- Cerchio 3: Magenta (ridotto del 35%) - Sovrapposto al celeste -->
+            <div class="absolute w-52 h-52 rounded-full bg-primary/30 blur-xl" style="top: 15%; left: 15%; z-index: 6;"></div>
+            <!-- Cerchio 4: Celeste (ridotto del 35%) -->
+            <div class="absolute w-42 h-42 rounded-full bg-cyan/60 blur-xl" style="bottom: 5%; right: 20%; z-index: 5;"></div>
+            <!-- Cerchio 8: Celeste grande -->
+        <div class="absolute w-72 h-72 bg-cyan/40 rounded-full blur-xl" style="top: 25%; left: 15%; z-index: 5;"></div>
         </div>
     
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -584,6 +586,54 @@
                     mouseFollower.style.opacity = '0.4';
                 });
             }
+            
+            // Movimento dei cerchi decorativi basato sul mouse con casualità
+            const circles = document.querySelectorAll('div[class*="bg-primary"], div[class*="bg-cyan"], div[class*="bg-violet"]');
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            // Genera parametri casuali per ogni cerchio
+             const circleParams = Array.from(circles).map((circle, index) => {
+                 if (circle.id === 'mouse-follower') return null;
+                 return {
+                     speed: 0.05 + Math.random() * 0.08, // Velocità casuale tra 0.05 e 0.13
+                     offsetX: (Math.random() - 0.5) * 200, // Offset casuale X aumentato
+                     offsetY: (Math.random() - 0.5) * 200, // Offset casuale Y aumentato
+                     direction: Math.random() > 0.5 ? 1 : -1, // Direzione casuale
+                     delay: Math.random() * 0.2 // Ritardo casuale per la transizione
+                 };
+             });
+            
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                circles.forEach((circle, index) => {
+                    // Escludi il mouse follower
+                    if (circle.id === 'mouse-follower' || !circleParams[index]) return;
+                    
+                    const params = circleParams[index];
+                    const baseX = (mouseX - window.innerWidth / 2) * params.speed * params.direction;
+                    const baseY = (mouseY - window.innerHeight / 2) * params.speed;
+                    
+                    // Aggiungi movimento casuale
+                     const x = baseX + params.offsetX * 0.3;
+                     const y = baseY + params.offsetY * 0.3;
+                    
+                    circle.style.transform = `translate(${x}px, ${y}px)`;
+                    circle.style.transition = `transform ${0.2 + params.delay}s ease-out`;
+                });
+            });
+            
+            // Reset posizione quando il mouse esce dalla finestra
+            document.addEventListener('mouseleave', function() {
+                circles.forEach((circle, index) => {
+                    if (circle.id === 'mouse-follower' || !circleParams[index]) return;
+                    const params = circleParams[index];
+                    circle.style.transform = 'translate(0px, 0px)';
+                    circle.style.transition = `transform ${0.5 + params.delay}s ease-out`;
+                });
+            });
         });
     </script>
 
