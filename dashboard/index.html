@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -30,8 +30,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="main-site.html" class="flex items-center">
-                        <img src="images/logo.svg" alt="SBAM Logo" class="h-8 w-auto">
+                    <a href="../main-site/" class="flex items-center">
+                        <img src="../images/logo.svg" alt="SBAM Logo" class="h-8 w-auto">
                     </a>
                 </div>
                 
@@ -177,7 +177,7 @@
         (function() {
             const hasValidSession = sessionStorage.getItem('sbam_access_granted');
             if (!hasValidSession) {
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
                 return;
             }
             // Access granted - show content
@@ -209,7 +209,7 @@
                 displayUserInfo(user);
             } else {
                 // User is signed out, redirect to main site
-                window.location.href = 'main-site.html';
+                window.location.href = '../main-site/';
             }
         });
 
@@ -237,7 +237,7 @@
         document.getElementById('logout-btn').addEventListener('click', async () => {
             try {
                 await auth.signOut();
-                window.location.href = 'main-site.html';
+                window.location.href = '../main-site/';
             } catch (error) {
                 console.error('Logout error:', error);
                 alert('Logout failed: ' + error.message);

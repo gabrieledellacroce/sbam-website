@@ -148,7 +148,7 @@
             <div class="flex justify-between items-center h-20">
                 <div class="flex-shrink-0 flex items-center">
                     <a href="#" class="flex items-center">
-                        <img src="images/logo.svg" alt="SBAM Logo" class="h-8 md:h-10 w-auto">
+                        <img src="../images/logo.svg" alt="SBAM Logo" class="h-8 md:h-10 w-auto">
                     </a>
                 </div>
                 <nav class="hidden md:flex items-center space-x-8">
@@ -511,7 +511,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div>
                     <a href="#" class="flex items-center">
-                        <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto">
+                        <img src="../images/logo.svg" alt="SBAM Logo" class="h-10 w-auto">
                     </a>
                     <p class="mt-4 max-w-xs">The future of SEO optimized for AI-powered search. Transform how search engines see your content.</p>
                 </div>
@@ -561,7 +561,7 @@
             
             <!-- Fixed Header -->
             <div class="text-center p-3 sm:p-4 pb-2 flex-shrink-0">
-                <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
+                <img src="../images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
                 <h2 class="russo text-xl text-dark mb-1">Welcome Back</h2>
                 <p class="text-gray-600 text-sm">Sign in to your SBAM account</p>
             </div>
@@ -610,7 +610,7 @@
             
             <!-- Fixed Header -->
             <div class="text-center p-3 sm:p-4 pb-2 flex-shrink-0">
-                <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
+                <img src="../images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
                 <h2 class="russo text-xl text-dark mb-1">Join SBAM</h2>
                 <p class="text-gray-600 text-sm">Start optimizing for AI search today</p>
             </div>
@@ -710,7 +710,7 @@
         (function() {
             const hasValidSession = sessionStorage.getItem('sbam_access_granted');
             if (!hasValidSession) {
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
                 return;
             }
             // Access granted - show content
@@ -856,7 +856,7 @@
                 
                 // Redirect to dashboard
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = '../dashboard/';
                 }, 500);
                 
             } catch (error) {
@@ -928,7 +928,7 @@
                 
                 // Redirect to dashboard after 2 seconds
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = '../dashboard/';
                 }, 2000);
                 
             } catch (error) {
@@ -969,7 +969,7 @@
 
         // Dashboard and Settings (placeholder functionality)
         document.getElementById('dashboard-btn').addEventListener('click', () => {
-            window.location.href = 'dashboard.html';
+            window.location.href = '../dashboard/';
         });
 
         document.getElementById('settings-btn').addEventListener('click', () => {
