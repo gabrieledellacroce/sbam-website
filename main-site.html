@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBAM | GenAI SEO Algorithm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bungee&family=Russo+One&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E738C7',
+                        cyan: '#00E7FF',
+                        violet: '#8B16C9',
+                        dark: '#0A0A0A',
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        bungee: ['Bungee', 'sans-serif'],
+                        russo: ['Russo One', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        'pulse-slow': {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.7 },
+                        },
+
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fafafa;
+            scroll-behavior: smooth;
+        }
+        .bungee {
+            font-family: 'Bungee', sans-serif;
+            letter-spacing: 1.05em;
+        }
+        .russo {
+            font-family: 'Russo One', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        .inter {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.4;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        @keyframes slideInLeft {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide-in-right {
+            animation: slideInRight 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        @keyframes slideInRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .slide-in-top {
+            animation: slideInTop 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        @keyframes slideInTop {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-delay-100 {
+            animation-delay: 100ms;
+        }
+        .animate-delay-200 {
+            animation-delay: 200ms;
+        }
+        .animate-delay-300 {
+            animation-delay: 300ms;
+        }
+        .animate-delay-400 {
+            animation-delay: 400ms;
+        }
+        .animate-delay-500 {
+            animation-delay: 500ms;
+        }
+        
+        /* Prevenzione scroll orizzontale */
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+        }
+        
+        * {
+            max-width: 100% !important;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden overflow-y-visible">
+    <!-- Cerchio che segue il mouse per tutta la pagina -->
+    <div id="mouse-follower" class="fixed w-32 h-32 bg-pink-400/40 rounded-full filter blur-xl opacity-0 pointer-events-none transition-all duration-100 ease-out z-[60] hidden md:block"></div>
+    <!-- Navigation -->
+    <header class="fixed top-0 w-full bg-white bg-opacity-90 backdrop-blur-sm z-[200] border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="flex items-center">
+                        <img src="images/logo.svg" alt="SBAM Logo" class="h-8 md:h-10 w-auto">
+                    </a>
+                </div>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#hero" class="text-dark font-medium hover:text-primary transition-colors">Home</a>
+                    <a href="#how-it-works" class="text-dark font-medium hover:text-primary transition-colors">Algo</a>
+                    <a href="#case-studies" class="text-dark font-medium hover:text-primary transition-colors">Case Studies</a>
+                    <a href="#" class="text-dark font-medium hover:text-primary transition-colors">Company</a>
+                    <button id="login-btn" class="text-dark font-medium hover:text-primary transition-colors">Login</button>
+                    <button id="register-btn" class="bg-primary text-white px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Sign Up</button>
+                </nav>
+                <!-- Rimuovere questo div duplicato: -->
+                <!-- <div class="hidden md:block">
+                    <div class="flex space-x-10">
+                        <a href="#hero" class="text-dark hover:text-primary transition-colors font-medium">Home</a>
+                        <a href="#how-it-works" class="text-dark hover:text-primary transition-colors font-medium">Algo</a>
+                        <a href="#case-studies" class="text-dark hover:text-primary transition-colors font-medium">Case Studies</a>
+                        <a href="#" class="text-dark hover:text-primary transition-colors font-medium">Company</a>
+                        <a href="#cta" class="bg-primary text-white px-6 py-2.5 rounded-full font-medium hover:bg-opacity-90 transition-colors">Try Algo</a>
+                    </div>
+                </div> -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-dark">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#hero" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Home</a>
+                <a href="#how-it-works" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Algo</a>
+                <a href="#case-studies" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Case Studies</a>
+                <a href="#" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Company</a>
+                <button id="mobile-login-btn" class="block w-full text-left px-3 py-2 text-dark font-medium hover:bg-gray-50">Login</button>
+                <button id="mobile-register-btn" class="block w-full px-3 py-2 bg-primary text-white rounded-md text-center font-medium hover:bg-opacity-90">Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="min-h-screen flex items-center justify-center bg-gray-50 relative">
+        <!-- Cerchi di sfondo estesi -->
+        <div class="absolute pointer-events-none inset-0">
+            <!-- Cerchio 1: Celeste (in alto a sinistra) - Sopra header -->
+            <div class="absolute w-24 h-24 md:w-88 md:h-88 rounded-full bg-cyan/60 blur-xl" 
+                 style="top: 25%; left: 20%; z-index: 55;"></div>
+            <!-- Cerchio 2: Magenta (in alto a destra) - Sopra header -->
+            <div class="absolute w-20 h-20 md:w-80 md:h-80 rounded-full bg-primary/30 blur-xl" 
+                 style="top: 25%; right: 20%; z-index: 55;"></div>
+            <!-- Cerchio 3: Celeste (in basso a sinistra) - Esteso nella sezione successiva -->
+            <div class="absolute w-20 h-20 md:w-75 md:h-75 rounded-full bg-cyan/60 blur-xl" 
+                 style="bottom: 10%; left: 20%; z-index: 5;"></div>
+            <!-- Cerchio 4: Magenta (in basso a destra) - Esteso nella sezione successiva -->
+            <div class="absolute w-22 h-22 md:w-85 md:h-85 rounded-full bg-primary/35 blur-xl" 
+                 style="bottom: 10%; right: 20%; z-index: 5;"></div>
+            <!-- Cerchio 5: Viola (centrale grande) -->
+            <div class="absolute w-20 h-20 md:w-77 md:h-77 rounded-full bg-violet/30 blur-xl" 
+                 style="top: 50%; left: 30%; transform: translate(-50%, -50%); z-index: 5;"></div>
+            <!-- Cerchio 6: Magenta (centrale medio) -->
+            <div class="absolute w-16 h-16 md:w-47 md:h-47 rounded-full bg-primary/15 blur-xl" 
+                 style="top: 35%; left: 60%; z-index: 5; opacity: 0.6;"></div>
+            <!-- Cerchio 7: Viola (in basso a destra piccolo) -->
+            <div class="absolute w-12 h-12 md:w-32 md:h-32 rounded-full bg-violet/20 blur-xl" 
+                 style="bottom: 25%; right: 30%; z-index: 5; opacity: 0.6;"></div>
+            <!-- Cerchio 1: Magenta (ridotto del 35%) - Sopra header -->
+            <div class="absolute w-18 h-18 md:w-62 md:h-62 rounded-full bg-primary/20 blur-xl" style="top: 10%; left: 10%; z-index: 5; opacity: 0.7;"></div>
+            <!-- Cerchio 2: Celeste (ridotto del 35%) - Sopra header -->
+            <div class="absolute w-16 h-16 md:w-47 md:h-47 rounded-full bg-cyan/40 blur-xl" style="top: 15%; right: 15%; z-index: 5; opacity: 0.7;"></div>
+            <!-- Cerchio 3: Magenta (ridotto del 35%) - Sovrapposto al celeste - Sopra header -->
+            <div class="absolute w-16 h-16 md:w-52 md:h-52 rounded-full bg-primary/20 blur-xl" style="top: 15%; left: 25%; z-index: 5; opacity: 0.6;"></div>
+            <!-- Cerchio 4: Celeste (ridotto del 35%) -->
+            <div class="absolute w-14 h-14 md:w-42 md:h-42 rounded-full bg-cyan/40 blur-xl" style="bottom: 15%; right: 25%; z-index: 5; opacity: 0.6;"></div>
+            <!-- Cerchio 8: Celeste grande - Sopra header -->
+        <div class="absolute w-24 h-24 md:w-72 md:h-72 bg-cyan/25 rounded-full blur-xl" style="top: 25%; left: 25%; z-index: 5; opacity: 0.5;"></div>
+        
+        <!-- Cerchi che appaiono durante lo scroll -->
+         <div id="scroll-circle-1" class="fixed w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 rounded-full bg-primary/25 blur-xl transition-all duration-1000 ease-out" 
+              style="top: 20%; left: 10%; z-index: 0; opacity: 0; transform: scale(0.5) translateY(50px); pointer-events: none;"></div>
+         
+         <div id="scroll-circle-2" class="fixed w-28 h-28 md:w-44 md:h-44 lg:w-60 lg:h-60 rounded-full bg-cyan/30 blur-xl transition-all duration-1000 ease-out" 
+              style="top: 60%; right: 15%; z-index: 0; opacity: 0; transform: scale(0.5) translateY(-50px); pointer-events: none;"></div>
+        </div>
+    
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center relative z-10">
+                <h1 class="russo text-4xl md:text-6xl lg:text-7xl text-dark tracking-wide">Be first in new-customer searches</h1>
+                <p class="inter max-w-2xl mx-auto mt-8 text-xl text-gray-700 opacity-90">Powered by the first algorithm built for GenAI and classic SEO</p>
+                <a href="#cta" class="mt-10 inline-block bg-primary hover:bg-opacity-90 transition-colors text-white text-lg font-semibold px-8 py-4 rounded-full shadow-lg">Try SBAM Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted By -->
+    <section id="trusted" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <p class="text-gray-600 text-lg font-medium uppercase tracking-wider fade-in">Trusted by</p>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-10 md:gap-16">
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-100"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-200"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-300"></div>
+                <div class="w-32 h-16 bg-gray-200 border-2 border-dashed rounded-xl fade-in animate-delay-400"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How Algo Works -->
+    <section id="how-it-works" class="py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">How Algo Works</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Step 1 -->
+                <div class="slide-in-left rounded-2xl bg-white p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary bg-opacity-10 text-primary rounded-full font-bold text-xl">1</div>
+                        <h3 class="russo text-xl ml-4">Semantic Analysis</h3>
+                    </div>
+                    <p class="text-gray-700 mb-4 italic">Reads your content like a human, scores it like a machine.</p>
+                    <p class="text-gray-600">SBAM analyzes your text, images, metadata, and structure to extract meaning and intent, optimizing semantic alignment.</p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="slide-in-top rounded-2xl bg-white p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow animate-delay-200">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 flex items-center justify-center bg-violet bg-opacity-10 text-violet rounded-full font-bold text-xl">2</div>
+                        <h3 class="russo text-xl ml-4">Dynamic Visibility Tuning</h3>
+                    </div>
+                    <p class="text-gray-700 mb-4 italic">Adapts your site to how users and AIs search.</p>
+                    <p class="text-gray-600">The algorithm dynamically modulates how content is perceived based on user queries and generative search trends.</p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="slide-in-right rounded-2xl bg-white p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow animate-delay-400">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 flex items-center justify-center bg-cyan bg-opacity-10 text-cyan rounded-full font-bold text-xl">3</div>
+                        <h3 class="russo text-xl ml-4">Continuous Learning & Integration</h3>
+                    </div>
+                    <p class="text-gray-700 mb-4 italic">Keeps learning to stay ahead of SEO and GenAI shifts.</p>
+                    <p class="text-gray-600">Using machine learning and Google APIs, SBAM updates your site’s relevance—no hacks, just lasting authority.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-16 fade-in animate-delay-500">
+                <a href="#cta" class="inline-block bg-dark hover:bg-opacity-90 transition-colors text-white text-lg font-semibold px-8 py-4 rounded-full shadow">TRY ALGO NOW</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Studies -->
+    <section id="case-studies" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">Case Studies</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow slide-in-left">
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">"SBAM increased our organic traffic by 275% in just 3 months. Their algorithm actually understands how to optimize for AI-driven search."</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full bg-gray-200"></div>
+                            <div class="ml-4">
+                                <p class="font-medium text-dark">Alex Morgan</p>
+                                <p class="text-sm text-gray-600">TechLead, StartupX</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow slide-in-top animate-delay-200">
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">"The semantic analysis feature helped us rank for high-intent keywords we never even considered. ROI is through the roof!"</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full bg-gray-200"></div>
+                            <div class="ml-4">
+                                <p class="font-medium text-dark">Jamie Chen</p>
+                                <p class="text-sm text-gray-600">Marketing Director, BrandCo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow slide-in-top animate-delay-400">
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">"Within weeks of implementation, we started ranking #1 for generative AI queries. The competition doesn't know what hit them."</p>
+                        <div class="flex items-center">
+                            <div class="w-14 h-14 rounded-full bg-gray-200"></div>
+                            <div class="ml-4">
+                                <p class="font-medium text-dark">Taylor Reynolds</p>
+                                <p class="text-sm text-gray-600">SEO Manager, TechGiant Inc</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">Pricing</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Tier -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow slide-in-left">
+                    <h3 class="russo text-2xl text-dark mb-4">Free</h3>
+                    <div class="flex items-end mb-6">
+                        <span class="russo text-4xl">$0</span>
+                        <span class="text-gray-600 ml-1">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-10">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Basic Semantic Analysis</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Monthly SEO Reports</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> 5 Page Optimization</li>
+                    </ul>
+                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-dark font-medium py-3 px-4 rounded-full transition-colors">Get Started</button>
+                </div>
+                
+                <!-- Growth Tier -->
+                <div class="bg-white rounded-2xl p-8 border-2 border-primary shadow-lg transform md:-translate-y-4 slide-in-top">
+                    <div class="absolute top-0 right-0 bg-primary text-white px-4 py-1 rounded-bl-lg">POPULAR</div>
+                    <h3 class="russo text-2xl text-dark mb-4">Growth</h3>
+                    <div class="flex items-end mb-6">
+                        <span class="russo text-4xl">$50</span>
+                        <span class="text-gray-600 ml-1">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-10">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Advanced Semantic Analysis</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Weekly SEO Reports</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> 50 Page Optimization</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Dynamic Visibility Tuning</li>
+                    </ul>
+                    <button class="w-full bg-primary hover:bg-opacity-90 text-white font-medium py-3 px-4 rounded-full transition-colors">Choose Plan</button>
+                </div>
+                
+                <!-- Enterprise Tier -->
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow slide-in-right">
+                    <h3 class="russo text-2xl text-dark mb-4">Enterprise</h3>
+                    <div class="flex items-end mb-6">
+                        <span class="russo text-4xl">Custom</span>
+                    </div>
+                    <ul class="space-y-3 mb-10">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Full Semantic Suite</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Real-time Dashboard</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Unlimited Pages</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Continuous Learning AI</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-primary mr-3"></i> Dedicated Support</li>
+                    </ul>
+                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-dark font-medium py-3 px-4 rounded-full transition-colors">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-24 bg-gray-50">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-4 slide-in-top">Frequently Asked Questions</h2>
+                <div class="w-24 h-1 bg-primary mx-auto slide-in-top animate-delay-100"></div>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- FAQ 1 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>How is SBAM different from traditional SEO tools?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">SBAM is specifically designed for the AI-powered search landscape. Traditional tools optimize for keyword matching, while SBAM optimizes for semantic meaning and intent understanding that generative AI uses to produce search results.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ 2 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>Do I need coding skills to implement SBAM?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">No coding is required. SBAM integrates seamlessly with your existing CMS through our simple plugin or API connection. Our onboarding team handles all technical aspects.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ 3 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>How quickly will I see results?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">Most customers see measurable improvements in AI search visibility within 2 weeks. Full impact on traditional search rankings typically manifests in 4-8 weeks as the learning algorithm continues to optimize.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ 4 -->
+                <div class="bg-white rounded-2xl shadow-sm">
+                    <button class="faq-toggle w-full text-left p-6 font-medium flex justify-between items-center">
+                        <span>What platforms does SBAM support?</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden p-6 pt-0 border-t border-gray-100">
+                        <p class="text-gray-600">SBAM currently supports all major platforms including WordPress, Shopify, Webflow, Wix, and custom-built websites via our API. Mobile app support is coming in Q4.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta" class="py-24 bg-gradient-to-r from-[#8B16C9]/5 to-[#00E7FF]/5 relative">
+        <!-- Background circles -->
+        <div class="absolute inset-0 overflow-hidden z-0">
+            <div class="absolute top-1/4 right-1/4 w-24 h-24 md:w-64 md:h-64 rounded-full bg-primary/5 blur-3xl parallax-element" data-depth="0.1" data-speed="0.3"></div>
+            <div class="absolute bottom-1/3 left-1/4 w-20 h-20 md:w-48 md:h-48 rounded-full bg-violet/5 blur-3xl parallax-element" data-depth="0.2" data-speed="0.4"></div>
+        </div>
+        
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-6 slide-in-top">Ready to be the first?</h2>
+            <p class="text-xl text-gray-700 max-w-2xl mx-auto mb-12 fade-in">Join hundreds of forward-thinking companies already leveraging SBAM to dominate AI search results.</p>
+            
+            <div class="w-96 mx-auto bg-white rounded-full shadow-lg flex p-1 fade-in animate-delay-200">
+                <input type="email" placeholder="Your email" class="w-full px-3 py-2 border-0 rounded-l-full focus:outline-none text-sm">
+                <button class="bg-primary hover:bg-opacity-90 transition-colors text-white font-semibold px-4 py-2 rounded-full text-sm whitespace-nowrap">Try ALGO 🚀</button>
+            </div>
+            
+            <!-- Error message for invalid email -->
+            <div id="email-error" class="hidden mt-2 text-red-500 font-semibold text-sm">
+                ⚠️ Please enter a valid email address (example: name@domain.com)
+            </div>
+            
+            <p class="text-sm text-gray-500 mt-4 fade-in animate-delay-400">7-day free trial. No credit card required.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 bg-dark text-gray-300 relative">
+        <!-- Background circles -->
+        <div class="absolute inset-0 overflow-hidden z-0">
+            <div class="absolute bottom-0 left-1/4 w-36 h-36 md:w-96 md:h-96 rounded-full bg-primary/3 blur-3xl parallax-element" data-depth="0.1" data-speed="0.2"></div>
+            <div class="absolute top-1/2 right-1/3 w-24 h-24 md:w-64 md:h-64 rounded-full bg-cyan/3 blur-3xl parallax-element" data-depth="0.15" data-speed="0.25"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div>
+                    <a href="#" class="flex items-center">
+                        <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto">
+                    </a>
+                    <p class="mt-4 max-w-xs">The future of SEO optimized for AI-powered search. Transform how search engines see your content.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold text-lg mb-4">Product</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">API</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Documentation</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold text-lg mb-4">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="hover:text-primary transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-16 pt-8 text-center md:text-left">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500">&copy; 2023 SBAM Technologies. All rights reserved.</p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-white transition-colors"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[300] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-xs max-h-[85vh] relative flex flex-col">
+            <button id="close-login-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors z-10">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            
+            <!-- Fixed Header -->
+            <div class="text-center p-3 sm:p-4 pb-2 flex-shrink-0">
+                <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
+                <h2 class="russo text-xl text-dark mb-1">Welcome Back</h2>
+                <p class="text-gray-600 text-sm">Sign in to your SBAM account</p>
+            </div>
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-3 sm:px-4 pb-3 sm:pb-4">
+                <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="login-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="login-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <button type="button" id="forgot-password-btn" class="text-sm text-primary hover:underline">Forgot password?</button>
+                </div>
+                
+                <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-opacity-90 transition-colors text-sm">
+                    Sign In
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-gray-600">Don't have an account? 
+                        <button type="button" id="switch-to-register" class="text-primary hover:underline font-medium">Sign up</button>
+                    </p>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[300] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-xs max-h-[85vh] relative flex flex-col">
+            <button id="close-register-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors z-10">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            
+            <!-- Fixed Header -->
+            <div class="text-center p-3 sm:p-4 pb-2 flex-shrink-0">
+                <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
+                <h2 class="russo text-xl text-dark mb-1">Join SBAM</h2>
+                <p class="text-gray-600 text-sm">Start optimizing for AI search today</p>
+            </div>
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-3 sm:px-4 pb-3 sm:pb-4">
+                <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="register-firstname" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                    <input type="text" id="register-firstname" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div>
+                    <label for="register-lastname" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                    <input type="text" id="register-lastname" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div>
+                    <label for="register-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="register-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div>
+                    <label for="register-company" class="block text-sm font-medium text-gray-700 mb-2">Company (Optional)</label>
+                    <input type="text" id="register-company" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div>
+                    <label for="register-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="register-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                    <p class="text-xs text-gray-500 mt-1">At least 8 characters with numbers and letters</p>
+                </div>
+                
+                <div>
+                    <label for="register-confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                    <input type="password" id="register-confirm-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div class="flex items-start">
+                    <input type="checkbox" id="register-terms" required class="mt-1 rounded border-gray-300 text-primary focus:ring-primary">
+                    <label for="register-terms" class="ml-2 text-sm text-gray-600">
+                        I agree to the <a href="#" class="text-primary hover:underline">Terms of Service</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-opacity-90 transition-colors text-sm">
+                    Create Account
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-gray-600">Already have an account? 
+                        <button type="button" id="switch-to-login" class="text-primary hover:underline font-medium">Sign in</button>
+                    </p>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[300] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="russo text-xl text-dark mb-2">Welcome to SBAM!</h3>
+            <p class="text-gray-600 mb-6">Your account has been created successfully. Please check your email to verify your account.</p>
+            <button id="close-success-modal" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors">
+                Get Started
+            </button>
+        </div>
+    </div>
+
+    <!-- User Dashboard (shown when logged in) -->
+    <div id="user-dashboard" class="hidden">
+        <div class="fixed top-20 right-4 bg-white rounded-lg shadow-lg border p-4 z-[250]">
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <span id="user-initials" class="text-white text-sm font-medium"></span>
+                </div>
+                <div>
+                    <p id="user-name" class="font-medium text-sm"></p>
+                    <p id="user-email" class="text-xs text-gray-500"></p>
+                </div>
+            </div>
+            <div class="border-t pt-3">
+                <button id="dashboard-btn" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-1">Dashboard</button>
+                <button id="settings-btn" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-1">Settings</button>
+                <button id="logout-btn" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-1">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            // Sostituire con la configurazione Firebase del progetto
+            apiKey: "your-api-key",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Authentication State Management
+        let currentUser = null;
+
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+            currentUser = user;
+            updateUIForAuthState(user);
+        });
+
+        function updateUIForAuthState(user) {
+            const loginBtn = document.getElementById('login-btn');
+            const registerBtn = document.getElementById('register-btn');
+            const mobileLoginBtn = document.getElementById('mobile-login-btn');
+            const mobileRegisterBtn = document.getElementById('mobile-register-btn');
+            const userDashboard = document.getElementById('user-dashboard');
+
+            if (user) {
+                // User is logged in
+                loginBtn.style.display = 'none';
+                registerBtn.style.display = 'none';
+                mobileLoginBtn.style.display = 'none';
+                mobileRegisterBtn.style.display = 'none';
+                
+                // Show user dashboard
+                userDashboard.classList.remove('hidden');
+                
+                // Update user info
+                const userName = user.displayName || `${user.email.split('@')[0]}`;
+                const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                
+                document.getElementById('user-name').textContent = userName;
+                document.getElementById('user-email').textContent = user.email;
+                document.getElementById('user-initials').textContent = userInitials;
+            } else {
+                // User is not logged in
+                loginBtn.style.display = 'block';
+                registerBtn.style.display = 'block';
+                mobileLoginBtn.style.display = 'block';
+                mobileRegisterBtn.style.display = 'block';
+                userDashboard.classList.add('hidden');
+            }
+        }
+
+        // Modal Management
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function hideAllModals() {
+            hideModal('login-modal');
+            hideModal('register-modal');
+            hideModal('success-modal');
+        }
+
+        // Event Listeners for Modal Controls
+        document.getElementById('login-btn').addEventListener('click', () => showModal('login-modal'));
+        document.getElementById('register-btn').addEventListener('click', () => showModal('register-modal'));
+        document.getElementById('mobile-login-btn').addEventListener('click', () => {
+            showModal('login-modal');
+            document.getElementById('mobile-menu').classList.add('hidden');
+        });
+        document.getElementById('mobile-register-btn').addEventListener('click', () => {
+            showModal('register-modal');
+            document.getElementById('mobile-menu').classList.add('hidden');
+        });
+
+        // Close modal buttons
+        document.getElementById('close-login-modal').addEventListener('click', () => hideModal('login-modal'));
+        document.getElementById('close-register-modal').addEventListener('click', () => hideModal('register-modal'));
+        document.getElementById('close-success-modal').addEventListener('click', () => hideModal('success-modal'));
+
+        // Switch between login and register
+        document.getElementById('switch-to-register').addEventListener('click', () => {
+            hideModal('login-modal');
+            showModal('register-modal');
+        });
+        document.getElementById('switch-to-login').addEventListener('click', () => {
+            hideModal('register-modal');
+            showModal('login-modal');
+        });
+
+        // Close modals when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('bg-black') && e.target.classList.contains('bg-opacity-50')) {
+                hideAllModals();
+            }
+        });
+
+        // Login Form Handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            // Show loading state
+            submitBtn.textContent = 'Signing In...';
+            submitBtn.disabled = true;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                hideModal('login-modal');
+                
+                // Reset form
+                document.getElementById('login-form').reset();
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed: ' + error.message);
+            } finally {
+                submitBtn.textContent = 'Sign In';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Register Form Handler
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('register-firstname').value;
+            const lastName = document.getElementById('register-lastname').value;
+            const email = document.getElementById('register-email').value;
+            const company = document.getElementById('register-company').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            // Validation
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters long');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Create user account
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Update user profile
+                await user.updateProfile({
+                    displayName: `${firstName} ${lastName}`
+                });
+                
+                // Save additional user data to Firestore
+                await db.collection('users').doc(user.uid).set({
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    company: company,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    emailVerified: false
+                });
+                
+                // Send email verification
+                await user.sendEmailVerification();
+                
+                hideModal('register-modal');
+                showModal('success-modal');
+                
+                // Reset form
+                document.getElementById('register-form').reset();
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed: ' + error.message);
+            } finally {
+                submitBtn.textContent = 'Create Account';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Logout Handler
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+
+        // Forgot Password Handler
+        document.getElementById('forgot-password-btn').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value;
+            
+            if (!email) {
+                alert('Please enter your email address first');
+                return;
+            }
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                alert('Password reset email sent! Check your inbox.');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                alert('Error sending password reset email: ' + error.message);
+            }
+        });
+
+        // Dashboard and Settings (placeholder functionality)
+        document.getElementById('dashboard-btn').addEventListener('click', () => {
+            alert('Dashboard functionality coming soon!');
+        });
+
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            alert('Settings functionality coming soon!');
+        });
+
+        // Email validation function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Update CTA form to work with registration
+        const ctaForm = document.querySelector('#cta input[type="email"]');
+        const ctaButton = document.querySelector('#cta button');
+        const emailError = document.getElementById('email-error');
+        
+        function showEmailError() {
+            ctaForm.style.borderColor = '#ef4444';
+            emailError.classList.remove('hidden');
+            setTimeout(() => {
+                ctaForm.style.borderColor = '';
+                emailError.classList.add('hidden');
+            }, 4000);
+        }
+        
+        if (ctaButton) {
+            ctaButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = ctaForm.value.trim();
+                
+                if (email && isValidEmail(email)) {
+                    // Hide any previous error and pre-fill registration form
+                    emailError.classList.add('hidden');
+                    ctaForm.style.borderColor = '';
+                    document.getElementById('register-email').value = email;
+                    showModal('register-modal');
+                } else if (email && !isValidEmail(email)) {
+                    // Show error for invalid email
+                    showEmailError();
+                } else {
+                    showModal('register-modal');
+                }
+            });
+        }
+        
+        // Add Enter key support for email input
+        if (ctaForm) {
+            ctaForm.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const email = ctaForm.value.trim();
+                    
+                    if (email && isValidEmail(email)) {
+                        // Hide any previous error and pre-fill registration form
+                        emailError.classList.add('hidden');
+                        ctaForm.style.borderColor = '';
+                        document.getElementById('register-email').value = email;
+                        showModal('register-modal');
+                    } else if (email && !isValidEmail(email)) {
+                        // Show error for invalid email
+                        showEmailError();
+                    } else {
+                        showModal('register-modal');
+                    }
+                }
+            });
+        }
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('i');
+                
+                content.classList.toggle('hidden');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+
+        // Observers for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .slide-in-top').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Scroll to anchor links with offset
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.add('hidden');
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Cerchio che segue il mouse
+        document.addEventListener('DOMContentLoaded', function() {
+            const mouseFollower = document.getElementById('mouse-follower');
+            
+            if (mouseFollower) {
+                document.addEventListener('mousemove', function(e) {
+                    const x = e.clientX - 64; // -64 per centrare il cerchio (w-32 = 128px / 2)
+                    const y = e.clientY - 64;
+                    
+                    mouseFollower.style.transform = `translate(${x}px, ${y}px)`;
+                    mouseFollower.style.opacity = '0.4';
+                });
+                
+                // Nascondi il cerchio quando il mouse esce dalla finestra
+                document.addEventListener('mouseleave', function() {
+                    mouseFollower.style.opacity = '0';
+                });
+                
+                // Mostra il cerchio quando il mouse entra nella finestra
+                document.addEventListener('mouseenter', function() {
+                    mouseFollower.style.opacity = '0.4';
+                });
+            }
+            
+            // Movimento dei cerchi decorativi basato sullo scroll solo su mobile
+            const circles = document.querySelectorAll('div[class*="blur-xl"]');
+            
+            // Funzione per generare parametri casuali per ogni cerchio
+            function generateCircleParams() {
+                return Array.from(circles).map((circle, index) => {
+                    if (circle.id === 'mouse-follower') return null;
+                    return {
+                        speed: 0.2 + Math.random() * 0.9, // Velocità casuale più variabile
+                        offsetX: (Math.random() - 0.5) * 150, // Offset casuale X più ampio
+                        offsetY: (Math.random() - 0.5) * 150, // Offset casuale Y più ampio
+                        direction: Math.random() > 0.5 ? 1 : -1, // Direzione casuale
+                        directionY: Math.random() > 0.5 ? 1 : -1, // Direzione Y separata
+                        mouseInfluence: 0.3 + Math.random() * 1.8, // Influenza del mouse più variabile
+                        crossMovement: Math.random() * 1.2, // Movimento incrociato più ampio
+                        delay: Math.random() * 0.15, // Ritardo casuale per la transizione
+                        rotationSpeed: Math.random() * 0.5 + 0.1, // Velocità rotazione casuale
+                        scaleVariation: Math.random() * 0.2 + 0.9, // Variazione scala casuale
+                        phaseOffset: Math.random() * Math.PI * 2 // Offset di fase per movimento sinusoidale
+                    };
+                });
+            }
+            
+            // Genera parametri casuali iniziali per ogni cerchio
+            let circleParams = generateCircleParams();
+            
+            // Rigenera parametri casuali ogni volta che la pagina viene caricata
+            // Questo assicura movimenti diversi ad ogni sessione
+            function regenerateCircleParams() {
+                circleParams = generateCircleParams();
+                console.log('Nuovi parametri casuali generati per i cerchi decorativi');
+            }
+            
+            // Rigenera parametri ad ogni caricamento della pagina
+            regenerateCircleParams();
+            
+            // Funzione per verificare se siamo su mobile
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
+            
+            // Movimento dei cerchi: scroll su mobile, mouse + scroll su desktop
+            let ticking = false;
+            let mouseX = 0;
+            let mouseY = 0;
+            let scrollY = 0;
+            
+            function updateCirclesOnScroll() {
+                scrollY = window.pageYOffset;
+                const time = Date.now() * 0.001; // Tempo per animazioni fluide
+                
+                if (isMobile()) {
+                    // Su mobile: movimento multidirezionale casuale completo
+                    circles.forEach((circle, index) => {
+                        if (!circle || circle.id === 'mouse-follower' || !circleParams[index] || !circle.style) return;
+                        
+                        const params = circleParams[index];
+                        
+                        // Movimento base con direzioni casuali per X e Y
+                        const baseX = (scrollY * params.speed * 0.3 * params.direction) + params.offsetX * 0.3;
+                        const baseY = (scrollY * params.speed * 0.25 * params.directionY) + params.offsetY * 0.3;
+                        
+                        // Movimento sinusoidale casuale multidirezionale
+                        const sineX = Math.sin(time * params.rotationSpeed + params.phaseOffset) * 20;
+                        const sineY = Math.cos(time * params.rotationSpeed * 0.7 + params.phaseOffset) * 18;
+                        
+                        // Movimento aggiuntivo con pattern diversi
+                        const extraX = Math.cos(time * params.rotationSpeed * 1.3 + params.phaseOffset * 2) * 12;
+                        const extraY = Math.sin(time * params.rotationSpeed * 0.9 + params.phaseOffset * 1.5) * 15;
+                        
+                        const x = Math.round(baseX + sineX + extraX);
+                        const y = Math.round(baseY + sineY + extraY);
+                        const rotation = time * params.rotationSpeed * 25;
+                        const scale = params.scaleVariation + Math.sin(time * 0.6 + params.phaseOffset) * 0.06;
+                        
+                        circle.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
+                        circle.style.willChange = 'transform';
+                    });
+                } else {
+                    // Su desktop: aggiorna anche con scroll (combinato con mouse)
+                    updateCirclesDesktop();
+                }
+                
+                ticking = false;
+            }
+            
+            function updateCirclesDesktop() {
+                if (isMobile()) return;
+                
+                // Assicurati che scrollY sia sempre aggiornata
+                scrollY = window.pageYOffset;
+                const time = Date.now() * 0.001; // Tempo per animazioni fluide
+                
+                circles.forEach((circle, index) => {
+                    if (!circle || circle.id === 'mouse-follower' || !circleParams[index] || !circle.style) return;
+                    
+                    const params = circleParams[index];
+                    
+                    // Effetto mouse
+                    const mouseBaseX = mouseX * params.speed * 0.08 * params.direction * params.mouseInfluence;
+                    const mouseBaseY = mouseY * params.speed * 0.08 * params.directionY * params.mouseInfluence;
+                    const mouseCrossX = mouseY * params.crossMovement * 0.06 * params.direction;
+                    const mouseCrossY = mouseX * params.crossMovement * 0.07 * params.directionY;
+                    
+                    // Effetto scroll (molto più visibile su desktop)
+                    const scrollBaseX = scrollY * params.speed * 0.4 * params.direction;
+                    const scrollBaseY = scrollY * params.speed * 0.35;
+                    
+                    // Movimento sinusoidale casuale aggiuntivo
+                    const sineX = Math.sin(time * params.rotationSpeed + params.phaseOffset) * 12;
+                    const sineY = Math.cos(time * params.rotationSpeed * 0.7 + params.phaseOffset) * 8;
+                    
+                    // Combinazione mouse + scroll + movimento casuale
+                    const baseX = mouseBaseX + mouseCrossX + scrollBaseX + params.offsetX * 0.4;
+                    const baseY = mouseBaseY + mouseCrossY + scrollBaseY + params.offsetY * 0.4;
+                    
+                    const x = Math.round(baseX + sineX);
+                    const y = Math.round(baseY + sineY);
+                    const rotation = time * params.rotationSpeed * 15;
+                    const scale = params.scaleVariation + Math.sin(time * 0.3 + params.phaseOffset) * 0.04;
+                    
+                    circle.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
+                    circle.style.willChange = 'transform';
+                });
+            }
+            
+            // Event listener per lo scroll con throttling
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(function() {
+                        try {
+                            updateCirclesOnScroll();
+                        } catch (error) {
+                            console.warn('Errore nell\'animazione dei cerchi:', error);
+                            ticking = false;
+                        }
+                    });
+                    ticking = true;
+                }
+            });
+            
+            // Event listener per il mouse su desktop
+            document.addEventListener('mousemove', function(e) {
+                if (!isMobile()) {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    updateCirclesDesktop();
+                }
+            });
+            
+            // Event listener per il resize per gestire il cambio da mobile a desktop
+            window.addEventListener('resize', function() {
+                try {
+                    if (isMobile()) {
+                        updateCirclesOnScroll();
+                    } else {
+                        updateCirclesDesktop();
+                    }
+                } catch (error) {
+                    console.warn('Errore nel resize dei cerchi:', error);
+                }
+            });
+            
+            // Debug e inizializzazione sicura
+            console.log('Cerchi trovati:', circles.length);
+            console.log('Mobile detected:', isMobile());
+            console.log('Desktop: Mouse + Scroll interattività abilitata');
+            
+            try {
+                if (isMobile()) {
+                    updateCirclesOnScroll();
+                } else {
+                    updateCirclesDesktop();
+                }
+            } catch (error) {
+                console.warn('Errore nell\'inizializzazione dei cerchi:', error);
+            }
+        });
+        
+        // Gestione cerchi che appaiono durante lo scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollCircle1 = document.getElementById('scroll-circle-1');
+            const scrollCircle2 = document.getElementById('scroll-circle-2');
+            
+            let circle1Visible = false;
+            let circle2Visible = false;
+            
+            // Parametri di movimento casuali per ogni cerchio
+            let circle1Params = {};
+            let circle2Params = {};
+            
+            // Funzione per generare parametri casuali di movimento
+            function generateRandomParams() {
+                return {
+                    speedX: Math.random() * 8 + 4, // velocità X tra 4 e 12
+                    speedY: Math.random() * 6 + 3, // velocità Y tra 3 e 9
+                    amplitudeX: Math.random() * 40 + 20, // ampiezza X tra 20 e 60px
+                    amplitudeY: Math.random() * 30 + 15, // ampiezza Y tra 15 e 45px
+                    phaseX: Math.random() * Math.PI * 2, // fase iniziale X
+                    phaseY: Math.random() * Math.PI * 2, // fase iniziale Y
+                    directionX: Math.random() > 0.5 ? 1 : -1, // direzione X
+                    directionY: Math.random() > 0.5 ? 1 : -1, // direzione Y
+                    rotationSpeed: Math.random() * 2 + 0.5, // velocità rotazione
+                    scaleVariation: Math.random() * 0.3 + 0.85 // variazione scala
+                };
+            }
+            
+            function handleScrollCircles() {
+                const scrollY = window.pageYOffset;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                const scrollPercent = scrollY / (documentHeight - windowHeight);
+                
+                // Cerchio 1: appare al 20% dello scroll
+                if (scrollPercent > 0.2 && scrollPercent < 0.6 && !circle1Visible) {
+                    circle1Visible = true;
+                    circle1Params = generateRandomParams(); // Nuovi parametri casuali
+                    scrollCircle1.style.opacity = '0.8';
+                    scrollCircle1.style.transform = 'scale(1) translateY(0px)';
+                } else if ((scrollPercent <= 0.2 || scrollPercent >= 0.6) && circle1Visible) {
+                    circle1Visible = false;
+                    scrollCircle1.style.opacity = '0';
+                    scrollCircle1.style.transform = 'scale(0.5) translateY(50px)';
+                }
+                
+                // Cerchio 2: appare al 50% dello scroll
+                if (scrollPercent > 0.5 && scrollPercent < 0.9 && !circle2Visible) {
+                    circle2Visible = true;
+                    circle2Params = generateRandomParams(); // Nuovi parametri casuali
+                    scrollCircle2.style.opacity = '0.7';
+                    scrollCircle2.style.transform = 'scale(1) translateY(0px)';
+                } else if ((scrollPercent <= 0.5 || scrollPercent >= 0.9) && circle2Visible) {
+                    circle2Visible = false;
+                    scrollCircle2.style.opacity = '0';
+                    scrollCircle2.style.transform = 'scale(0.5) translateY(-50px)';
+                }
+                
+                // Movimento fluido casuale durante la visibilità
+                if (circle1Visible && circle1Params.speedX) {
+                    const time = Date.now() * 0.001; // tempo in secondi
+                    const moveX = Math.sin(time * circle1Params.speedX + circle1Params.phaseX) * circle1Params.amplitudeX * circle1Params.directionX;
+                    const moveY = Math.cos(time * circle1Params.speedY + circle1Params.phaseY) * circle1Params.amplitudeY * circle1Params.directionY;
+                    const rotation = time * circle1Params.rotationSpeed * 10;
+                    const scale = circle1Params.scaleVariation + Math.sin(time * 2) * 0.1;
+                    scrollCircle1.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px) rotate(${rotation}deg)`;
+                }
+                
+                if (circle2Visible && circle2Params.speedX) {
+                    const time = Date.now() * 0.001; // tempo in secondi
+                    const moveX = Math.cos(time * circle2Params.speedX + circle2Params.phaseX) * circle2Params.amplitudeX * circle2Params.directionX;
+                    const moveY = Math.sin(time * circle2Params.speedY + circle2Params.phaseY) * circle2Params.amplitudeY * circle2Params.directionY;
+                    const rotation = time * circle2Params.rotationSpeed * 15;
+                    const scale = circle2Params.scaleVariation + Math.cos(time * 1.5) * 0.12;
+                    scrollCircle2.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px) rotate(${rotation}deg)`;
+                }
+            }
+            
+            // Throttled scroll listener
+            let scrollTicking = false;
+            window.addEventListener('scroll', function() {
+                if (!scrollTicking) {
+                    requestAnimationFrame(function() {
+                        handleScrollCircles();
+                        scrollTicking = false;
+                    });
+                    scrollTicking = true;
+                }
+            });
+            
+            // Inizializzazione
+            handleScrollCircles();
+        });
+    </script>
+
+</body>
+</html>
