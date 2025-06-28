@@ -180,8 +180,7 @@
                 window.location.href = '../index.html';
                 return;
             }
-            // Access granted - show content
-            document.body.classList.add('access-granted');
+            // Don't show content yet - wait for Firebase auth verification
         })();
 
         // Firebase configuration
@@ -205,7 +204,8 @@
         // Check authentication state
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // User is signed in
+                // User is signed in - show content and display user info
+                document.body.classList.add('access-granted');
                 displayUserInfo(user);
             } else {
                 // User is signed out, redirect to main site
