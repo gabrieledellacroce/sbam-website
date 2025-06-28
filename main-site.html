@@ -695,6 +695,15 @@
     </div>
 
     <script>
+        // IMMEDIATE ACCESS CONTROL - Must be first!
+        (function() {
+            const hasValidSession = sessionStorage.getItem('sbam_access_granted');
+            if (!hasValidSession) {
+                window.location.href = 'index.html';
+                return;
+            }
+        })();
+
         // Mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
             const mobileMenu = document.getElementById('mobile-menu');
@@ -717,23 +726,7 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Check if user has valid session or came from password page
-        function checkAccess() {
-            const hasValidSession = sessionStorage.getItem('sbam_access_granted');
-            
-            if (!hasValidSession) {
-                // Redirect to password protection page
-                window.location.href = 'index.html';
-                return false;
-            }
-            
-            return true;
-        }
-
-        // Check access on page load
-        if (!checkAccess()) {
-            return; // Stop execution if redirected
-        }
+        // Access control is now handled at the top of the script
 
         // Authentication State Management
         let currentUser = null;
