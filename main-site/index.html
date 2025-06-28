@@ -160,6 +160,31 @@
                     <a href="#" class="text-dark font-medium hover:text-primary transition-colors">Company</a>
                     <button id="login-btn" class="text-dark font-medium hover:text-primary transition-colors">Login</button>
                     <button id="register-btn" class="bg-primary text-white px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Sign Up</button>
+                    <!-- My Account dropdown (shown when logged in) -->
+                    <div id="my-account-dropdown" class="relative hidden">
+                        <button id="my-account-btn" class="text-dark font-medium hover:text-primary transition-colors flex items-center space-x-1">
+                            <span>My Account</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div id="account-dropdown-menu" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border opacity-0 invisible transform scale-95 transition-all duration-200 ease-out z-[250]">
+                            <div class="p-4">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                        <span id="user-initials-dropdown" class="text-white text-sm font-medium"></span>
+                                    </div>
+                                    <div>
+                                        <p id="user-name-dropdown" class="font-medium text-sm"></p>
+                                        <p id="user-email-dropdown" class="text-xs text-gray-500"></p>
+                                    </div>
+                                </div>
+                                <div class="border-t pt-3 space-y-1">
+                                    <button id="dashboard-btn-dropdown" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-2 px-2 rounded hover:bg-gray-50 transition-colors">Dashboard</button>
+                                    <button id="settings-btn-dropdown" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-2 px-2 rounded hover:bg-gray-50 transition-colors">Settings</button>
+                                    <button id="logout-btn-dropdown" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-2 px-2 rounded hover:bg-gray-50 transition-colors">Logout</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </nav>
                 <!-- Rimuovere questo div duplicato: -->
                 <!-- <div class="hidden md:block">
@@ -186,6 +211,25 @@
                 <a href="#" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Company</a>
                 <button id="mobile-login-btn" class="block w-full text-left px-3 py-2 text-dark font-medium hover:bg-gray-50">Login</button>
                 <button id="mobile-register-btn" class="block w-full px-3 py-2 bg-primary text-white rounded-md text-center font-medium hover:bg-opacity-90">Sign Up</button>
+                <!-- My Account section for mobile (shown when logged in) -->
+                <div id="mobile-my-account" class="hidden border-t pt-2 mt-2">
+                    <div class="px-3 py-2">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span id="user-initials-mobile" class="text-white text-sm font-medium"></span>
+                            </div>
+                            <div>
+                                <p id="user-name-mobile" class="font-medium text-sm"></p>
+                                <p id="user-email-mobile" class="text-xs text-gray-500"></p>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <button id="dashboard-btn-mobile" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-2 px-2 rounded hover:bg-gray-50 transition-colors">Dashboard</button>
+                            <button id="settings-btn-mobile" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-2 px-2 rounded hover:bg-gray-50 transition-colors">Settings</button>
+                            <button id="logout-btn-mobile" class="block w-full text-left text-sm text-gray-700 hover:text-primary py-2 px-2 rounded hover:bg-gray-50 transition-colors">Logout</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -761,6 +805,8 @@
             const mobileLoginBtn = document.getElementById('mobile-login-btn');
             const mobileRegisterBtn = document.getElementById('mobile-register-btn');
             const userDashboard = document.getElementById('user-dashboard');
+            const myAccountDropdown = document.getElementById('my-account-dropdown');
+            const mobileMyAccount = document.getElementById('mobile-my-account');
 
             if (user) {
                 // User is logged in
@@ -769,16 +815,24 @@
                 mobileLoginBtn.style.display = 'none';
                 mobileRegisterBtn.style.display = 'none';
                 
-                // Show user dashboard
-                userDashboard.classList.remove('hidden');
+                // Hide old user dashboard and show new dropdown
+                userDashboard.classList.add('hidden');
+                myAccountDropdown.classList.remove('hidden');
+                mobileMyAccount.classList.remove('hidden');
                 
                 // Update user info
                 const userName = user.displayName || `${user.email.split('@')[0]}`;
                 const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
                 
-                document.getElementById('user-name').textContent = userName;
-                document.getElementById('user-email').textContent = user.email;
-                document.getElementById('user-initials').textContent = userInitials;
+                // Update dropdown info
+                document.getElementById('user-name-dropdown').textContent = userName;
+                document.getElementById('user-email-dropdown').textContent = user.email;
+                document.getElementById('user-initials-dropdown').textContent = userInitials;
+                
+                // Update mobile info
+                document.getElementById('user-name-mobile').textContent = userName;
+                document.getElementById('user-email-mobile').textContent = user.email;
+                document.getElementById('user-initials-mobile').textContent = userInitials;
             } else {
                 // User is not logged in
                 loginBtn.style.display = 'block';
@@ -786,6 +840,8 @@
                 mobileLoginBtn.style.display = 'block';
                 mobileRegisterBtn.style.display = 'block';
                 userDashboard.classList.add('hidden');
+                myAccountDropdown.classList.add('hidden');
+                mobileMyAccount.classList.add('hidden');
             }
         }
 
@@ -1040,6 +1096,68 @@
             // Test button to show success modal without registration
             showModal('success-modal');
             startSuccessModalCountdown();
+        });
+
+        // My Account Dropdown Functionality
+        const myAccountBtn = document.getElementById('my-account-btn');
+        const accountDropdownMenu = document.getElementById('account-dropdown-menu');
+        const myAccountDropdown = document.getElementById('my-account-dropdown');
+        
+        let dropdownTimeout;
+        
+        // Show dropdown on hover
+        myAccountDropdown.addEventListener('mouseenter', () => {
+            clearTimeout(dropdownTimeout);
+            accountDropdownMenu.classList.remove('opacity-0', 'invisible', 'scale-95');
+            accountDropdownMenu.classList.add('opacity-100', 'visible', 'scale-100');
+        });
+        
+        // Hide dropdown when leaving
+        myAccountDropdown.addEventListener('mouseleave', () => {
+            dropdownTimeout = setTimeout(() => {
+                accountDropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+                accountDropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+            }, 150);
+        });
+        
+        // New dropdown event listeners
+        document.getElementById('dashboard-btn-dropdown').addEventListener('click', () => {
+            window.location.href = '../dashboard/';
+        });
+        
+        document.getElementById('settings-btn-dropdown').addEventListener('click', () => {
+            // Test button to show success modal without registration
+            showModal('success-modal');
+            startSuccessModalCountdown();
+        });
+        
+        document.getElementById('logout-btn-dropdown').addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                window.location.href = '../index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+        
+        // Mobile event listeners
+        document.getElementById('dashboard-btn-mobile').addEventListener('click', () => {
+            window.location.href = '../dashboard/';
+        });
+        
+        document.getElementById('settings-btn-mobile').addEventListener('click', () => {
+            // Test button to show success modal without registration
+            showModal('success-modal');
+            startSuccessModalCountdown();
+        });
+        
+        document.getElementById('logout-btn-mobile').addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                window.location.href = '../index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
         });
 
         // Test button for success modal
