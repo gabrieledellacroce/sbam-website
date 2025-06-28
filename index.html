@@ -133,6 +133,8 @@
             const errorMessage = document.getElementById('errorMessage');
             
             if (accessCode === 'ciaociao') {
+                // Set session storage to grant access
+                sessionStorage.setItem('sbam_access_granted', 'true');
                 // Redirect to main site
                 window.location.href = 'main-site.html';
             } else {

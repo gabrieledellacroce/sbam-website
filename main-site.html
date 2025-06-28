@@ -717,6 +717,28 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // Check if user has valid session or came from password page
+        function checkAccess() {
+            const hasValidSession = sessionStorage.getItem('sbam_access_granted');
+            const referrer = document.referrer;
+            const isFromPasswordPage = referrer.includes('index.html') || referrer === '' && window.location.pathname === '/main-site.html';
+            
+            if (!hasValidSession && !isFromPasswordPage) {
+                // Redirect to password protection page
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            // Set session storage for future visits
+            sessionStorage.setItem('sbam_access_granted', 'true');
+            return true;
+        }
+
+        // Check access on page load
+        if (!checkAccess()) {
+            return; // Stop execution if redirected
+        }
+
         // Authentication State Management
         let currentUser = null;
 
