@@ -14,6 +14,17 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        /* Hide content initially until access is verified */
+        body {
+            visibility: hidden;
+        }
+        body.access-granted {
+            visibility: visible;
+        }
+    </style>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -702,6 +713,8 @@
                 window.location.href = 'index.html';
                 return;
             }
+            // Access granted - show content
+            document.body.classList.add('access-granted');
         })();
 
         // Mobile menu toggle
