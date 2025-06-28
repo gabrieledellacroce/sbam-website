@@ -29,6 +29,7 @@
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+
                     },
                     keyframes: {
                         float: {
@@ -38,7 +39,8 @@
                         'pulse-slow': {
                             '0%, 100%': { opacity: 1 },
                             '50%': { opacity: 0.7 },
-                        }
+                        },
+
                     }
                 }
             }
@@ -111,7 +113,7 @@
         }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="overflow-x-hidden overflow-y-visible">
     <!-- Cerchio che segue il mouse per tutta la pagina -->
     <div id="mouse-follower" class="fixed w-32 h-32 bg-pink-400/40 rounded-full filter blur-xl opacity-0 pointer-events-none transition-all duration-100 ease-out z-[60] hidden md:block"></div>
     <!-- Navigation -->
@@ -160,20 +162,20 @@
 
     <!-- Hero Section -->
     <section id="hero" class="min-h-screen flex items-center justify-center bg-gray-50 relative">
-        <!-- Cerchi di sfondo -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <!-- Cerchi di sfondo estesi -->
+        <div class="absolute pointer-events-none" style="top: -20vh; left: -5vw; right: -5vw; bottom: -20vh;">
             <!-- Cerchio 1: Celeste (in alto a sinistra) - Sopra header -->
             <div class="absolute w-32 h-32 md:w-88 md:h-88 rounded-full bg-cyan/60 blur-xl" 
-                 style="top: 15%; left: 10%; z-index: 55;"></div>
+                 style="top: 25%; left: 15%; z-index: 55;"></div>
             <!-- Cerchio 2: Magenta (in alto a destra) - Sopra header -->
             <div class="absolute w-28 h-28 md:w-80 md:h-80 rounded-full bg-primary/30 blur-xl" 
-                 style="top: 15%; right: 10%; z-index: 55;"></div>
-            <!-- Cerchio 3: Celeste (in basso a sinistra) -->
+                 style="top: 25%; right: 15%; z-index: 55;"></div>
+            <!-- Cerchio 3: Celeste (in basso a sinistra) - Esteso nella sezione successiva -->
             <div class="absolute w-28 h-28 md:w-75 md:h-75 rounded-full bg-cyan/60 blur-xl" 
-                 style="bottom: 15%; left: 10%; z-index: 5;"></div>
-            <!-- Cerchio 4: Magenta (in basso a destra) -->
+                 style="bottom: 5%; left: 15%; z-index: 5;"></div>
+            <!-- Cerchio 4: Magenta (in basso a destra) - Esteso nella sezione successiva -->
             <div class="absolute w-30 h-30 md:w-85 md:h-85 rounded-full bg-primary/35 blur-xl" 
-                 style="bottom: 15%; right: 10%; z-index: 5;"></div>
+                 style="bottom: 5%; right: 15%; z-index: 5;"></div>
             <!-- Cerchio 5: Viola (centrale grande) -->
             <div class="absolute w-28 h-28 md:w-77 md:h-77 rounded-full bg-violet/30 blur-xl" 
                  style="top: 50%; left: 25%; transform: translate(-50%, -50%); z-index: 5;"></div>
@@ -193,6 +195,13 @@
             <div class="absolute w-18 h-18 md:w-42 md:h-42 rounded-full bg-cyan/40 blur-xl" style="bottom: 5%; right: 20%; z-index: 5; opacity: 0.6;"></div>
             <!-- Cerchio 8: Celeste grande - Sopra header -->
         <div class="absolute w-32 h-32 md:w-72 md:h-72 bg-cyan/25 rounded-full blur-xl" style="top: 25%; left: 15%; z-index: 5; opacity: 0.5;"></div>
+        
+        <!-- Cerchi che appaiono durante lo scroll -->
+         <div id="scroll-circle-1" class="fixed w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 rounded-full bg-primary/25 blur-xl transition-all duration-1000 ease-out" 
+              style="top: 20%; left: 10%; z-index: 0; opacity: 0; transform: scale(0.5) translateY(50px); pointer-events: none;"></div>
+         
+         <div id="scroll-circle-2" class="fixed w-28 h-28 md:w-44 md:h-44 lg:w-60 lg:h-60 rounded-full bg-cyan/30 blur-xl transition-all duration-1000 ease-out" 
+              style="top: 60%; right: 15%; z-index: 0; opacity: 0; transform: scale(0.5) translateY(-50px); pointer-events: none;"></div>
         </div>
     
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -590,20 +599,38 @@
             // Movimento dei cerchi decorativi basato sullo scroll solo su mobile
             const circles = document.querySelectorAll('div[class*="blur-xl"]');
             
-            // Genera parametri casuali per ogni cerchio
-            const circleParams = Array.from(circles).map((circle, index) => {
-                if (circle.id === 'mouse-follower') return null;
-                return {
-                    speed: 0.3 + Math.random() * 0.7, // Velocità casuale
-                    offsetX: (Math.random() - 0.5) * 120, // Offset casuale X
-                    offsetY: (Math.random() - 0.5) * 120, // Offset casuale Y
-                    direction: Math.random() > 0.5 ? 1 : -1, // Direzione casuale
-                    directionY: Math.random() > 0.5 ? 1 : -1, // Direzione Y separata
-                    mouseInfluence: 0.5 + Math.random() * 1.5, // Influenza del mouse
-                    crossMovement: Math.random() * 0.8, // Movimento incrociato
-                    delay: Math.random() * 0.1 // Ritardo casuale per la transizione
-                };
-            });
+            // Funzione per generare parametri casuali per ogni cerchio
+            function generateCircleParams() {
+                return Array.from(circles).map((circle, index) => {
+                    if (circle.id === 'mouse-follower') return null;
+                    return {
+                        speed: 0.2 + Math.random() * 0.9, // Velocità casuale più variabile
+                        offsetX: (Math.random() - 0.5) * 150, // Offset casuale X più ampio
+                        offsetY: (Math.random() - 0.5) * 150, // Offset casuale Y più ampio
+                        direction: Math.random() > 0.5 ? 1 : -1, // Direzione casuale
+                        directionY: Math.random() > 0.5 ? 1 : -1, // Direzione Y separata
+                        mouseInfluence: 0.3 + Math.random() * 1.8, // Influenza del mouse più variabile
+                        crossMovement: Math.random() * 1.2, // Movimento incrociato più ampio
+                        delay: Math.random() * 0.15, // Ritardo casuale per la transizione
+                        rotationSpeed: Math.random() * 0.5 + 0.1, // Velocità rotazione casuale
+                        scaleVariation: Math.random() * 0.2 + 0.9, // Variazione scala casuale
+                        phaseOffset: Math.random() * Math.PI * 2 // Offset di fase per movimento sinusoidale
+                    };
+                });
+            }
+            
+            // Genera parametri casuali iniziali per ogni cerchio
+            let circleParams = generateCircleParams();
+            
+            // Rigenera parametri casuali ogni volta che la pagina viene caricata
+            // Questo assicura movimenti diversi ad ogni sessione
+            function regenerateCircleParams() {
+                circleParams = generateCircleParams();
+                console.log('Nuovi parametri casuali generati per i cerchi decorativi');
+            }
+            
+            // Rigenera parametri ad ogni caricamento della pagina
+            regenerateCircleParams();
             
             // Funzione per verificare se siamo su mobile
             function isMobile() {
@@ -618,17 +645,33 @@
             
             function updateCirclesOnScroll() {
                 scrollY = window.pageYOffset;
+                const time = Date.now() * 0.001; // Tempo per animazioni fluide
                 
                 if (isMobile()) {
-                    // Su mobile: solo scroll
+                    // Su mobile: movimento multidirezionale casuale completo
                     circles.forEach((circle, index) => {
                         if (!circle || circle.id === 'mouse-follower' || !circleParams[index] || !circle.style) return;
                         
                         const params = circleParams[index];
-                        const x = Math.round((scrollY * params.speed * params.direction) + params.offsetX * 0.2);
-                        const y = Math.round((scrollY * params.speed * 0.5) + params.offsetY * 0.2);
                         
-                        circle.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                        // Movimento base con direzioni casuali per X e Y
+                        const baseX = (scrollY * params.speed * 0.3 * params.direction) + params.offsetX * 0.3;
+                        const baseY = (scrollY * params.speed * 0.25 * params.directionY) + params.offsetY * 0.3;
+                        
+                        // Movimento sinusoidale casuale multidirezionale
+                        const sineX = Math.sin(time * params.rotationSpeed + params.phaseOffset) * 20;
+                        const sineY = Math.cos(time * params.rotationSpeed * 0.7 + params.phaseOffset) * 18;
+                        
+                        // Movimento aggiuntivo con pattern diversi
+                        const extraX = Math.cos(time * params.rotationSpeed * 1.3 + params.phaseOffset * 2) * 12;
+                        const extraY = Math.sin(time * params.rotationSpeed * 0.9 + params.phaseOffset * 1.5) * 15;
+                        
+                        const x = Math.round(baseX + sineX + extraX);
+                        const y = Math.round(baseY + sineY + extraY);
+                        const rotation = time * params.rotationSpeed * 25;
+                        const scale = params.scaleVariation + Math.sin(time * 0.6 + params.phaseOffset) * 0.06;
+                        
+                        circle.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
                         circle.style.willChange = 'transform';
                     });
                 } else {
@@ -644,6 +687,7 @@
                 
                 // Assicurati che scrollY sia sempre aggiornata
                 scrollY = window.pageYOffset;
+                const time = Date.now() * 0.001; // Tempo per animazioni fluide
                 
                 circles.forEach((circle, index) => {
                     if (!circle || circle.id === 'mouse-follower' || !circleParams[index] || !circle.style) return;
@@ -656,15 +700,24 @@
                     const mouseCrossX = mouseY * params.crossMovement * 0.06 * params.direction;
                     const mouseCrossY = mouseX * params.crossMovement * 0.07 * params.directionY;
                     
-                    // Effetto scroll (più sottile su desktop)
-                    const scrollBaseX = scrollY * params.speed * 0.03 * params.direction;
-                    const scrollBaseY = scrollY * params.speed * 0.025;
+                    // Effetto scroll (molto più visibile su desktop)
+                    const scrollBaseX = scrollY * params.speed * 0.4 * params.direction;
+                    const scrollBaseY = scrollY * params.speed * 0.35;
                     
-                    // Combinazione mouse + scroll
-                    const x = Math.round(mouseBaseX + mouseCrossX + scrollBaseX + params.offsetX * 0.4);
-                    const y = Math.round(mouseBaseY + mouseCrossY + scrollBaseY + params.offsetY * 0.4);
+                    // Movimento sinusoidale casuale aggiuntivo
+                    const sineX = Math.sin(time * params.rotationSpeed + params.phaseOffset) * 12;
+                    const sineY = Math.cos(time * params.rotationSpeed * 0.7 + params.phaseOffset) * 8;
                     
-                    circle.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                    // Combinazione mouse + scroll + movimento casuale
+                    const baseX = mouseBaseX + mouseCrossX + scrollBaseX + params.offsetX * 0.4;
+                    const baseY = mouseBaseY + mouseCrossY + scrollBaseY + params.offsetY * 0.4;
+                    
+                    const x = Math.round(baseX + sineX);
+                    const y = Math.round(baseY + sineY);
+                    const rotation = time * params.rotationSpeed * 15;
+                    const scale = params.scaleVariation + Math.sin(time * 0.3 + params.phaseOffset) * 0.04;
+                    
+                    circle.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
                     circle.style.willChange = 'transform';
                 });
             }
@@ -720,6 +773,100 @@
             } catch (error) {
                 console.warn('Errore nell\'inizializzazione dei cerchi:', error);
             }
+        });
+        
+        // Gestione cerchi che appaiono durante lo scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const scrollCircle1 = document.getElementById('scroll-circle-1');
+            const scrollCircle2 = document.getElementById('scroll-circle-2');
+            
+            let circle1Visible = false;
+            let circle2Visible = false;
+            
+            // Parametri di movimento casuali per ogni cerchio
+            let circle1Params = {};
+            let circle2Params = {};
+            
+            // Funzione per generare parametri casuali di movimento
+            function generateRandomParams() {
+                return {
+                    speedX: Math.random() * 8 + 4, // velocità X tra 4 e 12
+                    speedY: Math.random() * 6 + 3, // velocità Y tra 3 e 9
+                    amplitudeX: Math.random() * 40 + 20, // ampiezza X tra 20 e 60px
+                    amplitudeY: Math.random() * 30 + 15, // ampiezza Y tra 15 e 45px
+                    phaseX: Math.random() * Math.PI * 2, // fase iniziale X
+                    phaseY: Math.random() * Math.PI * 2, // fase iniziale Y
+                    directionX: Math.random() > 0.5 ? 1 : -1, // direzione X
+                    directionY: Math.random() > 0.5 ? 1 : -1, // direzione Y
+                    rotationSpeed: Math.random() * 2 + 0.5, // velocità rotazione
+                    scaleVariation: Math.random() * 0.3 + 0.85 // variazione scala
+                };
+            }
+            
+            function handleScrollCircles() {
+                const scrollY = window.pageYOffset;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                const scrollPercent = scrollY / (documentHeight - windowHeight);
+                
+                // Cerchio 1: appare al 20% dello scroll
+                if (scrollPercent > 0.2 && scrollPercent < 0.6 && !circle1Visible) {
+                    circle1Visible = true;
+                    circle1Params = generateRandomParams(); // Nuovi parametri casuali
+                    scrollCircle1.style.opacity = '0.8';
+                    scrollCircle1.style.transform = 'scale(1) translateY(0px)';
+                } else if ((scrollPercent <= 0.2 || scrollPercent >= 0.6) && circle1Visible) {
+                    circle1Visible = false;
+                    scrollCircle1.style.opacity = '0';
+                    scrollCircle1.style.transform = 'scale(0.5) translateY(50px)';
+                }
+                
+                // Cerchio 2: appare al 50% dello scroll
+                if (scrollPercent > 0.5 && scrollPercent < 0.9 && !circle2Visible) {
+                    circle2Visible = true;
+                    circle2Params = generateRandomParams(); // Nuovi parametri casuali
+                    scrollCircle2.style.opacity = '0.7';
+                    scrollCircle2.style.transform = 'scale(1) translateY(0px)';
+                } else if ((scrollPercent <= 0.5 || scrollPercent >= 0.9) && circle2Visible) {
+                    circle2Visible = false;
+                    scrollCircle2.style.opacity = '0';
+                    scrollCircle2.style.transform = 'scale(0.5) translateY(-50px)';
+                }
+                
+                // Movimento fluido casuale durante la visibilità
+                if (circle1Visible && circle1Params.speedX) {
+                    const time = Date.now() * 0.001; // tempo in secondi
+                    const moveX = Math.sin(time * circle1Params.speedX + circle1Params.phaseX) * circle1Params.amplitudeX * circle1Params.directionX;
+                    const moveY = Math.cos(time * circle1Params.speedY + circle1Params.phaseY) * circle1Params.amplitudeY * circle1Params.directionY;
+                    const rotation = time * circle1Params.rotationSpeed * 10;
+                    const scale = circle1Params.scaleVariation + Math.sin(time * 2) * 0.1;
+                    scrollCircle1.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px) rotate(${rotation}deg)`;
+                }
+                
+                if (circle2Visible && circle2Params.speedX) {
+                    const time = Date.now() * 0.001; // tempo in secondi
+                    const moveX = Math.cos(time * circle2Params.speedX + circle2Params.phaseX) * circle2Params.amplitudeX * circle2Params.directionX;
+                    const moveY = Math.sin(time * circle2Params.speedY + circle2Params.phaseY) * circle2Params.amplitudeY * circle2Params.directionY;
+                    const rotation = time * circle2Params.rotationSpeed * 15;
+                    const scale = circle2Params.scaleVariation + Math.cos(time * 1.5) * 0.12;
+                    scrollCircle2.style.transform = `scale(${scale}) translate(${moveX}px, ${moveY}px) rotate(${rotation}deg)`;
+                }
+            }
+            
+            // Throttled scroll listener
+            let scrollTicking = false;
+            window.addEventListener('scroll', function() {
+                if (!scrollTicking) {
+                    requestAnimationFrame(function() {
+                        handleScrollCircles();
+                        scrollTicking = false;
+                    });
+                    scrollTicking = true;
+                }
+            });
+            
+            // Inizializzazione
+            handleScrollCircles();
         });
     </script>
 
