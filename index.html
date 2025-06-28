@@ -479,6 +479,11 @@
                 <button class="bg-primary hover:bg-opacity-90 transition-colors text-white font-semibold px-4 py-2 rounded-full text-sm whitespace-nowrap">Try ALGO 🚀</button>
             </div>
             
+            <!-- Error message for invalid email -->
+            <div id="email-error" class="hidden mt-2 text-red-500 font-semibold text-sm">
+                ⚠️ Please enter a valid email address (example: name@domain.com)
+            </div>
+            
             <p class="text-sm text-gray-500 mt-4 fade-in animate-delay-400">7-day free trial. No credit card required.</p>
         </div>
     </section>
@@ -536,26 +541,29 @@
 
     <!-- Login Modal -->
     <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[300] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-8 relative">
-            <button id="close-login-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <i class="fas fa-times text-xl"></i>
+        <div class="bg-white rounded-xl max-w-xs max-h-[85vh] relative flex flex-col">
+            <button id="close-login-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors z-10">
+                <i class="fas fa-times text-lg"></i>
             </button>
             
-            <div class="text-center mb-8">
-                <img src="images/logo.svg" alt="SBAM Logo" class="h-12 w-auto mx-auto mb-4">
-                <h2 class="russo text-2xl text-dark mb-2">Welcome Back</h2>
-                <p class="text-gray-600">Sign in to your SBAM account</p>
+            <!-- Fixed Header -->
+            <div class="text-center p-3 sm:p-4 pb-2 flex-shrink-0">
+                <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
+                <h2 class="russo text-xl text-dark mb-1">Welcome Back</h2>
+                <p class="text-gray-600 text-sm">Sign in to your SBAM account</p>
             </div>
             
-            <form id="login-form" class="space-y-6">
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-3 sm:px-4 pb-3 sm:pb-4">
+                <form id="login-form" class="space-y-4">
                 <div>
                     <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="login-email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="email" id="login-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                 </div>
                 
                 <div>
                     <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input type="password" id="login-password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="password" id="login-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                 </div>
                 
                 <div class="flex items-center justify-between">
@@ -566,7 +574,7 @@
                     <button type="button" id="forgot-password-btn" class="text-sm text-primary hover:underline">Forgot password?</button>
                 </div>
                 
-                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors">
+                <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-opacity-90 transition-colors text-sm">
                     Sign In
                 </button>
                 
@@ -576,53 +584,56 @@
                     </p>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
     <!-- Register Modal -->
     <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[300] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-8 relative">
-            <button id="close-register-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <i class="fas fa-times text-xl"></i>
+        <div class="bg-white rounded-xl max-w-xs max-h-[85vh] relative flex flex-col">
+            <button id="close-register-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors z-10">
+                <i class="fas fa-times text-lg"></i>
             </button>
             
-            <div class="text-center mb-8">
-                <img src="images/logo.svg" alt="SBAM Logo" class="h-12 w-auto mx-auto mb-4">
-                <h2 class="russo text-2xl text-dark mb-2">Join SBAM</h2>
-                <p class="text-gray-600">Start optimizing for AI search today</p>
+            <!-- Fixed Header -->
+            <div class="text-center p-3 sm:p-4 pb-2 flex-shrink-0">
+                <img src="images/logo.svg" alt="SBAM Logo" class="h-10 w-auto mx-auto mb-3">
+                <h2 class="russo text-xl text-dark mb-1">Join SBAM</h2>
+                <p class="text-gray-600 text-sm">Start optimizing for AI search today</p>
             </div>
             
-            <form id="register-form" class="space-y-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="register-firstname" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                        <input type="text" id="register-firstname" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                    </div>
-                    <div>
-                        <label for="register-lastname" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                        <input type="text" id="register-lastname" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                    </div>
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-3 sm:px-4 pb-3 sm:pb-4">
+                <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="register-firstname" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                    <input type="text" id="register-firstname" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
+                </div>
+                
+                <div>
+                    <label for="register-lastname" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                    <input type="text" id="register-lastname" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                 </div>
                 
                 <div>
                     <label for="register-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="register-email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="email" id="register-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                 </div>
                 
                 <div>
                     <label for="register-company" class="block text-sm font-medium text-gray-700 mb-2">Company (Optional)</label>
-                    <input type="text" id="register-company" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="text" id="register-company" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                 </div>
                 
                 <div>
                     <label for="register-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input type="password" id="register-password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="password" id="register-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                     <p class="text-xs text-gray-500 mt-1">At least 8 characters with numbers and letters</p>
                 </div>
                 
                 <div>
                     <label for="register-confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                    <input type="password" id="register-confirm-password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="password" id="register-confirm-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                 </div>
                 
                 <div class="flex items-start">
@@ -632,7 +643,7 @@
                     </label>
                 </div>
                 
-                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors">
+                <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-opacity-90 transition-colors text-sm">
                     Create Account
                 </button>
                 
@@ -642,6 +653,7 @@
                     </p>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
@@ -934,6 +946,16 @@
         // Update CTA form to work with registration
         const ctaForm = document.querySelector('#cta input[type="email"]');
         const ctaButton = document.querySelector('#cta button');
+        const emailError = document.getElementById('email-error');
+        
+        function showEmailError() {
+            ctaForm.style.borderColor = '#ef4444';
+            emailError.classList.remove('hidden');
+            setTimeout(() => {
+                ctaForm.style.borderColor = '';
+                emailError.classList.add('hidden');
+            }, 4000);
+        }
         
         if (ctaButton) {
             ctaButton.addEventListener('click', (e) => {
@@ -941,18 +963,14 @@
                 const email = ctaForm.value.trim();
                 
                 if (email && isValidEmail(email)) {
-                    // Pre-fill registration form with email
+                    // Hide any previous error and pre-fill registration form
+                    emailError.classList.add('hidden');
+                    ctaForm.style.borderColor = '';
                     document.getElementById('register-email').value = email;
                     showModal('register-modal');
                 } else if (email && !isValidEmail(email)) {
                     // Show error for invalid email
-                    ctaForm.style.borderColor = '#ef4444';
-                    ctaForm.placeholder = 'Inserisci un\'email valida';
-                    ctaForm.value = '';
-                    setTimeout(() => {
-                        ctaForm.style.borderColor = '';
-                        ctaForm.placeholder = 'Your email';
-                    }, 3000);
+                    showEmailError();
                 } else {
                     showModal('register-modal');
                 }
@@ -967,18 +985,14 @@
                     const email = ctaForm.value.trim();
                     
                     if (email && isValidEmail(email)) {
-                        // Pre-fill registration form with email
+                        // Hide any previous error and pre-fill registration form
+                        emailError.classList.add('hidden');
+                        ctaForm.style.borderColor = '';
                         document.getElementById('register-email').value = email;
                         showModal('register-modal');
                     } else if (email && !isValidEmail(email)) {
                         // Show error for invalid email
-                        ctaForm.style.borderColor = '#ef4444';
-                        ctaForm.placeholder = 'Inserisci un\'email valida';
-                        ctaForm.value = '';
-                        setTimeout(() => {
-                            ctaForm.style.borderColor = '';
-                            ctaForm.placeholder = 'Your email';
-                        }, 3000);
+                        showEmailError();
                     } else {
                         showModal('register-modal');
                     }
