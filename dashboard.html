@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBAM Dashboard - Private Area</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="main-site.html" class="flex items-center">
+                        <img src="images/logo.svg" alt="SBAM Logo" class="h-8 w-auto">
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                            <span id="user-initials" class="text-white text-sm font-medium"></span>
+                        </div>
+                        <div>
+                            <p id="user-name" class="font-medium text-sm"></p>
+                            <p id="user-email" class="text-xs text-gray-500"></p>
+                        </div>
+                    </div>
+                    <button id="logout-btn" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="russo text-2xl text-dark mb-2">Welcome to SBAM Dashboard!</h1>
+                    <p class="text-gray-600">Manage your AI-powered SEO optimization from here.</p>
+                </div>
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-rocket text-green-600 text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">SEO Score</p>
+                        <p class="text-2xl font-bold text-gray-900">85%</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-search text-green-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Keywords Tracked</p>
+                        <p class="text-2xl font-bold text-gray-900">24</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-robot text-purple-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">AI Optimizations</p>
+                        <p class="text-2xl font-bold text-gray-900">12</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-plus text-blue-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Account created successfully</p>
+                            <p class="text-xs text-gray-500">Just now</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-green-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Welcome to SBAM!</p>
+                            <p class="text-xs text-gray-500">Ready to optimize your content</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                <div class="space-y-3">
+                    <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-upload text-primary"></i>
+                            <div>
+                                <p class="font-medium text-gray-900">Upload Content</p>
+                                <p class="text-sm text-gray-500">Start optimizing your content for AI search</p>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-cog text-primary"></i>
+                            <div>
+                                <p class="font-medium text-gray-900">Settings</p>
+                                <p class="text-sm text-gray-500">Configure your optimization preferences</p>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button class="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-question-circle text-primary"></i>
+                            <div>
+                                <p class="font-medium text-gray-900">Help & Support</p>
+                                <p class="text-sm text-gray-500">Get help with SBAM features</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBP_XcyPkItkYgNA9SjqlzPbMKPv7nMF_4",
+            authDomain: "sbam-92c62.firebaseapp.com",
+            projectId: "sbam-92c62",
+            storageBucket: "sbam-92c62.firebasestorage.app",
+            messagingSenderId: "895622966491",
+            appId: "1:895622966491:web:3a9d85004da27242a630fe",
+            measurementId: "G-8BYZ3DPETG"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Check authentication state
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                displayUserInfo(user);
+            } else {
+                // User is signed out, redirect to main site
+                window.location.href = 'main-site.html';
+            }
+        });
+
+        // Display user information
+        function displayUserInfo(user) {
+            const userInitials = document.getElementById('user-initials');
+            const userName = document.getElementById('user-name');
+            const userEmail = document.getElementById('user-email');
+
+            // Get initials from display name or email
+            let initials = '';
+            if (user.displayName) {
+                const names = user.displayName.split(' ');
+                initials = names.map(name => name.charAt(0)).join('').toUpperCase();
+            } else {
+                initials = user.email.charAt(0).toUpperCase();
+            }
+
+            userInitials.textContent = initials;
+            userName.textContent = user.displayName || 'User';
+            userEmail.textContent = user.email;
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                window.location.href = 'main-site.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Logout failed: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
