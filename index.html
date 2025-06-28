@@ -474,9 +474,9 @@
             <h2 class="russo text-3xl md:text-4xl lg:text-5xl text-dark mb-6 slide-in-top">Ready to be the first?</h2>
             <p class="text-xl text-gray-700 max-w-2xl mx-auto mb-12 fade-in">Join hundreds of forward-thinking companies already leveraging SBAM to dominate AI search results.</p>
             
-            <div class="max-w-md mx-auto bg-white rounded-full shadow-lg flex p-1 fade-in animate-delay-200">
-                <input type="email" placeholder="Enter your email address" class="w-full px-6 py-4 border-0 rounded-l-full focus:outline-none">
-                <button class="bg-primary hover:bg-opacity-90 transition-colors text-white font-semibold px-8 py-4 rounded-full">Start Free Trial</button>
+            <div class="w-96 mx-auto bg-white rounded-full shadow-lg flex p-1 fade-in animate-delay-200">
+                <input type="email" placeholder="Your email" class="w-full px-3 py-2 border-0 rounded-l-full focus:outline-none text-sm">
+                <button class="bg-primary hover:bg-opacity-90 transition-colors text-white font-semibold px-4 py-2 rounded-full text-sm whitespace-nowrap">Try ALGO 🚀</button>
             </div>
             
             <p class="text-sm text-gray-500 mt-4 fade-in animate-delay-400">7-day free trial. No credit card required.</p>
@@ -925,6 +925,12 @@
             alert('Settings functionality coming soon!');
         });
 
+        // Email validation function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
         // Update CTA form to work with registration
         const ctaForm = document.querySelector('#cta input[type="email"]');
         const ctaButton = document.querySelector('#cta button');
@@ -932,14 +938,50 @@
         if (ctaButton) {
             ctaButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                const email = ctaForm.value;
+                const email = ctaForm.value.trim();
                 
-                if (email) {
+                if (email && isValidEmail(email)) {
                     // Pre-fill registration form with email
                     document.getElementById('register-email').value = email;
                     showModal('register-modal');
+                } else if (email && !isValidEmail(email)) {
+                    // Show error for invalid email
+                    ctaForm.style.borderColor = '#ef4444';
+                    ctaForm.placeholder = 'Inserisci un\'email valida';
+                    ctaForm.value = '';
+                    setTimeout(() => {
+                        ctaForm.style.borderColor = '';
+                        ctaForm.placeholder = 'Your email';
+                    }, 3000);
                 } else {
                     showModal('register-modal');
+                }
+            });
+        }
+        
+        // Add Enter key support for email input
+        if (ctaForm) {
+            ctaForm.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const email = ctaForm.value.trim();
+                    
+                    if (email && isValidEmail(email)) {
+                        // Pre-fill registration form with email
+                        document.getElementById('register-email').value = email;
+                        showModal('register-modal');
+                    } else if (email && !isValidEmail(email)) {
+                        // Show error for invalid email
+                        ctaForm.style.borderColor = '#ef4444';
+                        ctaForm.placeholder = 'Inserisci un\'email valida';
+                        ctaForm.value = '';
+                        setTimeout(() => {
+                            ctaForm.style.borderColor = '';
+                            ctaForm.placeholder = 'Your email';
+                        }, 3000);
+                    } else {
+                        showModal('register-modal');
+                    }
                 }
             });
         }
