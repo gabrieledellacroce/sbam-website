@@ -55,6 +55,29 @@
         </div>
     </nav>
 
+    <!-- Email Verification Banner (shown only for unverified users) -->
+    <div id="verification-banner" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            <strong>Please verify your email address</strong> to unlock all features. Check your inbox for the verification link.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex-shrink-0">
+                    <button id="resend-verification" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-1 rounded text-sm font-medium transition-colors">
+                        Resend Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Welcome Section -->
@@ -204,16 +227,95 @@
         // Access control is now handled at the top of the script
 
         // Check authentication state
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
                 // User is signed in - show content and display user info
                 document.body.classList.add('access-granted');
                 displayUserInfo(user);
+                
+                // Check email verification status
+                await checkEmailVerification(user);
             } else {
                 // User is signed out, redirect to main site
                 window.location.href = '../main-site/';
             }
         });
+        
+        // Check email verification and show banner if needed
+        async function checkEmailVerification(user) {
+            const verificationBanner = document.getElementById('verification-banner');
+            
+            if (!user.emailVerified) {
+                // Show verification banner
+                verificationBanner.classList.remove('hidden');
+                
+                // Add limited access overlays
+                addLimitedAccessOverlays();
+            } else {
+                // Hide verification banner
+                verificationBanner.classList.add('hidden');
+                
+                // Update user status in Firestore
+                try {
+                    await db.collection('users').doc(user.uid).update({
+                        emailVerified: true,
+                        accountStatus: 'active'
+                    });
+                } catch (error) {
+                    console.error('Error updating verification status:', error);
+                }
+            }
+        }
+        
+        // Add overlays to limit access for unverified users
+        function addLimitedAccessOverlays() {
+            const quickActions = document.querySelectorAll('.bg-white.rounded-lg.shadow-sm button');
+            quickActions.forEach(button => {
+                if (!button.classList.contains('limited-access')) {
+                    button.classList.add('limited-access');
+                    button.style.position = 'relative';
+                    button.style.opacity = '0.6';
+                    
+                    const overlay = document.createElement('div');
+                    overlay.className = 'absolute inset-0 bg-gray-200 bg-opacity-75 flex items-center justify-center rounded-lg';
+                    overlay.innerHTML = '<span class="text-xs text-gray-600 font-medium">🔒 Verify email to unlock</span>';
+                    button.appendChild(overlay);
+                    
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        alert('Please verify your email address to access this feature.');
+                    });
+                }
+            });
+        }
+        
+        // Resend verification email
+         document.getElementById('resend-verification').addEventListener('click', async () => {
+             const user = auth.currentUser;
+             if (user && !user.emailVerified) {
+                 try {
+                     await user.sendEmailVerification();
+                     alert('Verification email sent! Please check your inbox.');
+                 } catch (error) {
+                     console.error('Error sending verification email:', error);
+                     alert('Error sending verification email. Please try again.');
+                 }
+             }
+         });
+         
+         // Check for email verification status changes periodically
+         setInterval(async () => {
+             const user = auth.currentUser;
+             if (user && !user.emailVerified) {
+                 await user.reload(); // Refresh user data
+                 if (user.emailVerified) {
+                     // Email was just verified, update UI
+                     await checkEmailVerification(user);
+                     location.reload(); // Refresh page to remove overlays
+                 }
+             }
+         }, 5000); // Check every 5 seconds
 
         // Display user information
         function displayUserInfo(user) {

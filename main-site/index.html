@@ -159,7 +159,7 @@
                     <a href="#case-studies" class="text-dark font-medium hover:text-primary transition-colors">Case Studies</a>
                     <a href="#" class="text-dark font-medium hover:text-primary transition-colors">Company</a>
                     <button id="login-btn" class="text-dark font-medium hover:text-primary transition-colors">Login</button>
-                    <button id="register-btn" class="bg-primary text-white px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Sign Up</button>
+                    <button id="register-btn" class="bg-primary text-white px-6 py-2 rounded-full font-medium hover:bg-opacity-90 transition-colors">Try ALGO Now 🚀</button>
                     <!-- My Account dropdown (shown when logged in) -->
                     <div id="my-account-dropdown" class="relative hidden">
                         <button id="my-account-btn" class="text-dark font-medium hover:text-primary transition-colors flex items-center space-x-1">
@@ -210,7 +210,7 @@
                 <a href="#case-studies" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Case Studies</a>
                 <a href="#" class="block px-3 py-2 text-dark font-medium hover:bg-gray-50">Company</a>
                 <button id="mobile-login-btn" class="block w-full text-left px-3 py-2 text-dark font-medium hover:bg-gray-50">Login</button>
-                <button id="mobile-register-btn" class="block w-full px-3 py-2 bg-primary text-white rounded-md text-center font-medium hover:bg-opacity-90">Sign Up</button>
+                <button id="mobile-register-btn" class="block w-full px-3 py-2 bg-primary text-white rounded-md text-center font-medium hover:bg-opacity-90">Try ALGO Now 🚀</button>
                 <!-- My Account section for mobile (shown when logged in) -->
                 <div id="mobile-my-account" class="hidden border-t pt-2 mt-2">
                     <div class="px-3 py-2">
@@ -665,25 +665,11 @@
             <div class="flex-1 overflow-y-auto px-3 sm:px-4 pb-3 sm:pb-4">
                 <form id="register-form" class="space-y-4">
                 <div>
-                    <label for="register-firstname" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                    <input type="text" id="register-firstname" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
-                </div>
-                
-                <div>
-                    <label for="register-lastname" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                    <input type="text" id="register-lastname" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
-                </div>
-                
-                <div>
                     <label for="register-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input type="email" id="register-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
                 </div>
                 
-                <div>
-                    <label for="register-company" class="block text-sm font-medium text-gray-700 mb-2">Company (Optional)</label>
-                    <input type="text" id="register-company" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
-                </div>
-                
+
                 <div>
                     <label for="register-password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
                     <input type="password" id="register-password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm">
@@ -726,10 +712,11 @@
                 <i class="fas fa-check text-green-600 text-xl"></i>
             </div>
             <h3 class="russo text-lg text-dark mb-2">Welcome to SBAM!</h3>
-            <p class="text-gray-600 text-sm mb-4">Your account has been created successfully. Please check your email to verify your account.</p>
+            <p class="text-gray-600 text-sm mb-4">Your account has been created successfully! We've sent a verification email to your inbox.</p>
+            <p class="text-gray-500 text-xs mb-4">You can start exploring your dashboard now with limited access. Full features will be unlocked after email verification.</p>
             <p id="countdown-text" class="text-gray-500 text-xs mb-4">You will be redirected to the dashboard in <span id="countdown-number" class="font-bold text-primary">5</span> seconds</p>
             <button id="close-success-modal" class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors text-sm">
-                Go ALGO 🚀
+                Go to Dashboard 🚀
             </button>
         </div>
     </div>
@@ -978,10 +965,7 @@
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const firstName = document.getElementById('register-firstname').value;
-            const lastName = document.getElementById('register-lastname').value;
             const email = document.getElementById('register-email').value;
-            const company = document.getElementById('register-company').value;
             const password = document.getElementById('register-password').value;
             const confirmPassword = document.getElementById('register-confirm-password').value;
             const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -1006,19 +990,12 @@
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
-                // Update user profile
-                await user.updateProfile({
-                    displayName: `${firstName} ${lastName}`
-                });
-                
-                // Save additional user data to Firestore
+                // Save user data to Firestore
                 await db.collection('users').doc(user.uid).set({
-                    firstName: firstName,
-                    lastName: lastName,
                     email: email,
-                    company: company,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    emailVerified: false
+                    emailVerified: false,
+                    accountStatus: 'pending_verification' // New field for account status
                 });
                 
                 // Send email verification
@@ -1026,7 +1003,7 @@
                 
                 hideModal('register-modal');
                 
-                // Show success modal with countdown
+                // Show success modal with verification message
                 showModal('success-modal');
                 startSuccessModalCountdown();
                 
