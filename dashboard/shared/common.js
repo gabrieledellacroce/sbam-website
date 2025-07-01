@@ -23,8 +23,9 @@ auth.onAuthStateChanged((user) => {
         displayUserInfo(user);
         checkEmailVerification(user);
     } else {
-        console.log('User not authenticated, redirecting...');
-        window.location.href = '../../';
+        console.log('User not authenticated, showing guest mode');
+        document.body.classList.add('access-granted');
+        displayGuestInfo();
     }
 });
 
@@ -53,6 +54,25 @@ function checkEmailVerification(user) {
             clearInterval(checkInterval);
         }
     }, 5000);
+}
+
+// Display guest information when not authenticated
+function displayGuestInfo() {
+    const userName = document.getElementById('user-name');
+    const userEmail = document.getElementById('user-email');
+    const userInitials = document.getElementById('userInitials');
+    const userInitialsDesktop = document.getElementById('userInitialsDesktop');
+    const userInitialsSidebar = document.getElementById('userInitialsSidebar');
+
+    if (userName) userName.textContent = 'Guest User';
+    if (userEmail) userEmail.textContent = 'guest@sbam.ai';
+    if (userInitials) userInitials.textContent = 'GU';
+    if (userInitialsDesktop) userInitialsDesktop.textContent = 'GU';
+    if (userInitialsSidebar) userInitialsSidebar.textContent = 'GU';
+    
+    // Hide email verification banner for guests
+    const banner = document.getElementById('verification-banner');
+    if (banner) banner.classList.add('hidden');
 }
 
 // Display user information

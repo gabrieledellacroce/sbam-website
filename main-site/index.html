@@ -741,16 +741,8 @@
     </div>
 
     <script>
-        // IMMEDIATE ACCESS CONTROL - Must be first!
-        (function() {
-            const hasValidSession = sessionStorage.getItem('sbam_access_granted');
-            if (!hasValidSession) {
-                window.location.href = '../index.html';
-                return;
-            }
-            // Access granted - show content
-            document.body.classList.add('access-granted');
-        })();
+        // Access granted - show content
+        document.body.classList.add('access-granted');
 
         // Mobile menu toggle
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
