@@ -1,14 +1,24 @@
 // Firebase Configuration
 // Sostituire questi valori con quelli del vostro progetto Firebase
 
-const firebaseConfig = {
-    apiKey: "your-api-key-here",
-    authDomain: "your-project-id.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project-id.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef123456789"
-};
+// Avoid redeclaration in SPA navigation
+if (typeof window.firebaseConfig === 'undefined') {
+    window.firebaseConfig = {
+        apiKey: "AIzaSyBP_XcyPkItkYgNA9SjqlzPbMKPv7nMF_4",
+        authDomain: "sbam-92c62.firebaseapp.com",
+        projectId: "sbam-92c62",
+        storageBucket: "sbam-92c62.firebasestorage.app",
+        messagingSenderId: "895622966491",
+        appId: "1:895622966491:web:3a9d85004da27242a630fe",
+        measurementId: "G-8BYZ3DPETG"
+    };
+    
+    // Initialize Firebase only once
+    if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
+        firebase.initializeApp(window.firebaseConfig);
+        console.log('Firebase initialized successfully');
+    }
+}
 
 // Istruzioni per configurare Firebase:
 // 1. Andare su https://console.firebase.google.com/
@@ -37,5 +47,5 @@ service cloud.firestore {
 
 // Esportare la configurazione se si usa un bundler
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = firebaseConfig;
+    module.exports = window.firebaseConfig;
 }

@@ -86,12 +86,7 @@ const sidebarTemplate = `
                         <span class="font-medium">Analytics</span>
                     </a>
                 </li>
-                <li>
-                    <a href="../settings/" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="settings">
-                        <i class="fas fa-cog text-gray-500 group-hover:text-primary mr-3"></i>
-                        <span class="font-medium">Settings</span>
-                    </a>
-                </li>
+
             </ul>
         </nav>
         
@@ -125,7 +120,7 @@ const sidebarTemplate = `
                 </div>
             </div>
             
-            <!-- Settings Menu -->
+            <!-- Settings and Logout -->
             <div class="mb-3">
                 <a href="../settings/" class="flex items-center px-3 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-sm font-medium transition-colors">
                     <i class="fas fa-cog mr-2"></i>Settings

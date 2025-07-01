@@ -41,6 +41,17 @@
             visibility: visible;
         }
         
+        /* Fallback to show content after 3 seconds if scripts don't load */
+        body {
+            animation: showContent 0s 3s forwards;
+        }
+        
+        @keyframes showContent {
+            to {
+                visibility: visible;
+            }
+        }
+        
         /* Theme toggle styles */
         .theme-btn {
             color: #6b7280;

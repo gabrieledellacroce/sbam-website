@@ -1,17 +1,7 @@
 // Shared Dashboard Functionality
 
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBKtLBhcNZKZKXh8ZJJ9rjQqY8FqY8FqY8",
-    authDomain: "sbam-92c62.firebaseapp.com",
-    projectId: "sbam-92c62",
-    storageBucket: "sbam-92c62.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef123456"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+// Firebase is already initialized by firebase-config.js
+// No need to redeclare firebaseConfig or reinitialize
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -58,12 +48,14 @@ function checkEmailVerification(user) {
 
 // Display guest information when not authenticated
 function displayGuestInfo() {
+    // Update guest info elements if they exist
     const userName = document.getElementById('user-name');
     const userEmail = document.getElementById('user-email');
     const userInitials = document.getElementById('userInitials');
     const userInitialsDesktop = document.getElementById('userInitialsDesktop');
     const userInitialsSidebar = document.getElementById('userInitialsSidebar');
 
+    // Update guest info if elements exist
     if (userName) userName.textContent = 'Guest User';
     if (userEmail) userEmail.textContent = 'guest@sbam.ai';
     if (userInitials) userInitials.textContent = 'GU';
@@ -77,20 +69,18 @@ function displayGuestInfo() {
 
 // Display user information
 function displayUserInfo(user) {
+    // Update user info elements if they exist
     const userName = document.getElementById('user-name');
     const userEmail = document.getElementById('user-email');
     const userInitials = document.getElementById('userInitials');
     const userInitialsDesktop = document.getElementById('userInitialsDesktop');
     const userInitialsSidebar = document.getElementById('userInitialsSidebar');
 
-    if (!userName || !userEmail) {
-        console.error('User info elements not found');
-        return;
-    }
-
     const displayName = user.displayName || user.email.split('@')[0];
-    userName.textContent = displayName;
-    userEmail.textContent = user.email;
+    
+    // Update name and email if elements exist
+    if (userName) userName.textContent = displayName;
+    if (userEmail) userEmail.textContent = user.email;
     
     // Generate initials
     let initials = '';
@@ -109,7 +99,7 @@ function displayUserInfo(user) {
         initials = user.email.charAt(0).toUpperCase();
     }
     
-    // Set initials in all locations
+    // Set initials in all locations if elements exist
     if (userInitials) userInitials.textContent = initials;
     if (userInitialsDesktop) userInitialsDesktop.textContent = initials;
     if (userInitialsSidebar) userInitialsSidebar.textContent = initials;
@@ -155,6 +145,10 @@ function initializeMobileMenu() {
         }
     });
 }
+
+// Make functions globally accessible
+window.displayUserInfo = displayUserInfo;
+window.displayGuestInfo = displayGuestInfo;
 
 // Mobile search functionality
 function initializeMobileSearch() {

@@ -8,27 +8,11 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
                     colors: {
                         primary: '#E738C7',
                         cyan: '#00E7FF',
@@ -40,15 +24,56 @@
         }
     </script>
     
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    
     <style>
-        .theme-btn {
-            color: #6b7280;
-            transition: all 0.2s ease;
+        body {
+            font-family: 'Inter', sans-serif;
+            visibility: hidden;
+        }
+        body.access-granted {
+            visibility: visible;
         }
         
-        .theme-btn:hover {
-            color: #374151;
-            background-color: rgba(107, 114, 128, 0.1);
+        /* Fallback: show content after 3 seconds if scripts don't load */
+        @keyframes showContent {
+            0% { visibility: hidden; }
+            100% { visibility: visible; }
+        }
+        
+        body {
+            animation: showContent 0s 3s forwards;
+        }
+        
+        /* Loading spinner */
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #E738C7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Theme toggle styles */
+        .theme-btn {
+            color: #6b7280;
+            background-color: transparent;
         }
         
         .theme-btn.active {
@@ -62,6 +87,20 @@
         
         .dark .theme-btn.active {
             color: #E738C7;
+            background-color: rgba(231, 56, 199, 0.2);
+        }
+        
+        /* Navigation active state */
+        .nav-link.active {
+            background-color: rgba(231, 56, 199, 0.1);
+            color: #E738C7;
+        }
+        
+        .nav-link.active i {
+            color: #E738C7;
+        }
+        
+        .dark .nav-link.active {
             background-color: rgba(231, 56, 199, 0.2);
         }
     </style>
@@ -85,433 +124,30 @@
         </div>
     </div>
 
-    <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden"></div>
-    
-    <!-- Fixed Header -->
-    <header class="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-        <div class="flex items-center justify-between px-4 lg:px-6 py-4">
-            <!-- Left side -->
-            <div class="flex items-center">
-                <!-- Mobile menu button -->
-                <button id="mobile-menu-btn" class="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 mr-3 lg:hidden">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <!-- Logo -->
-                <a href="../main-site/" class="flex items-center">
-                    <img src="../images/logo.svg" alt="SBAM Logo" class="h-8 w-auto mr-3">
-                </a>
-                <!-- Page title -->
-                <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Dashboard</h1>
-            </div>
-            
-            <!-- Right side -->
-            <div class="flex items-center space-x-4">
-                <!-- User avatar -->
-                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                    <span id="userInitials" class="text-white text-sm font-medium"></span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Left Sidebar -->
-    <div id="sidebar" class="fixed inset-y-0 lg:top-16 lg:bottom-0 left-0 z-50 lg:z-10 w-64 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0">
-        <!-- Mobile Logo Section -->
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700 lg:hidden">
-            <div class="flex items-center justify-between">
-                <a href="../main-site/" class="flex items-center">
-                    <img src="../images/logo.svg" alt="SBAM Logo" class="h-8 w-auto">
-                </a>
-                <button id="close-sidebar" class="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Navigation Menu -->
-        <nav class="flex-1 px-4 py-6 lg:pt-8">
-            <ul class="space-y-2">
-                <li>
-                    <a href="./" class="nav-link flex items-center px-4 py-3 text-primary bg-primary bg-opacity-10 rounded-lg transition-colors group" data-page="dashboard">
-                        <i class="fas fa-home text-primary mr-3"></i>
-                        <span class="font-medium">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="./algo/" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="algo">
-                        <i class="fas fa-robot text-gray-500 group-hover:text-primary mr-3"></i>
-                        <span class="font-medium">Algorithms</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="./analytics/" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="analytics">
-                        <i class="fas fa-chart-bar text-gray-500 group-hover:text-primary mr-3"></i>
-                        <span class="font-medium">Analytics</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="./settings/" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="settings">
-                        <i class="fas fa-cog text-gray-500 group-hover:text-primary mr-3"></i>
-                        <span class="font-medium">Settings</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        
-        <!-- User Profile Section -->
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div class="flex items-center space-x-3 mb-3">
-                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                    <span id="userInitialsSidebar" class="text-white text-sm font-medium"></span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p id="user-name" class="font-medium text-sm text-gray-900 dark:text-gray-100 truncate"></p>
-                    <p id="user-email" class="text-xs text-gray-500 dark:text-gray-400 truncate"></p>
-                </div>
-            </div>
-            
-            <!-- Theme Toggle -->
-            <div class="mb-3">
-                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                    <button id="theme-light" class="theme-btn flex-1 flex items-center justify-center py-1.5 px-2 rounded-md text-xs font-medium transition-colors">
-                        <i class="fas fa-sun mr-1"></i>
-                        Light
-                    </button>
-                    <button id="theme-dark" class="theme-btn flex-1 flex items-center justify-center py-1.5 px-2 rounded-md text-xs font-medium transition-colors mx-1">
-                        <i class="fas fa-moon mr-1"></i>
-                        Dark
-                    </button>
-                    <button id="theme-system" class="theme-btn flex-1 flex items-center justify-center py-1.5 px-2 rounded-md text-xs font-medium transition-colors">
-                        <i class="fas fa-desktop mr-1"></i>
-                        Auto
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Logout Button -->
-            <button id="logout-btn" class="w-full flex items-center px-3 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-sm font-medium transition-colors">
-                <i class="fas fa-sign-out-alt mr-2"></i>Logout
-            </button>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-gray-600 dark:text-gray-400">Loading dashboard...</p>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex min-h-screen pt-16">
-        <div class="flex-1 flex flex-col lg:ml-64">
-            <main class="min-h-screen overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-                <div class="p-6">
-                    <!-- Welcome Section -->
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Welcome to SBAM Dashboard</h2>
-                        <p class="text-gray-600 dark:text-gray-400">Manage your AI algorithms and analytics from here.</p>
-                    </div>
-                    
-                    <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                            <div class="flex items-center">
-                                <div class="p-2 bg-primary bg-opacity-10 rounded-lg">
-                                    <i class="fas fa-robot text-primary text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Algos</p>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">12</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                            <div class="flex items-center">
-                                <div class="p-2 bg-cyan bg-opacity-10 rounded-lg">
-                                    <i class="fas fa-chart-line text-cyan text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Performance</p>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">98.5%</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                            <div class="flex items-center">
-                                <div class="p-2 bg-violet bg-opacity-10 rounded-lg">
-                                    <i class="fas fa-database text-violet text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Data Processed</p>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">2.4TB</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                            <div class="flex items-center">
-                                <div class="p-2 bg-green-500 bg-opacity-10 rounded-lg">
-                                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Success Rate</p>
-                                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">99.2%</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Actions -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h3>
-                            <div class="space-y-3">
-                                <a href="./algo/" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
-                                    <div class="p-2 bg-primary bg-opacity-10 rounded-lg group-hover:bg-opacity-20 transition-colors">
-                                        <i class="fas fa-robot text-primary"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">Manage Algorithms</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Create and configure AI algorithms</p>
-                                    </div>
-                                </a>
-                                
-                                <a href="./analytics/" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
-                                    <div class="p-2 bg-cyan bg-opacity-10 rounded-lg group-hover:bg-opacity-20 transition-colors">
-                                        <i class="fas fa-chart-bar text-cyan"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">View Analytics</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Monitor performance and metrics</p>
-                                    </div>
-                                </a>
-                                
-                                <a href="./settings/" class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
-                                    <div class="p-2 bg-violet bg-opacity-10 rounded-lg group-hover:bg-opacity-20 transition-colors">
-                                        <i class="fas fa-cog text-violet"></i>
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">Settings</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">Configure your account preferences</p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Recent Activity</h3>
-                            <div class="space-y-3">
-                                <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
-                                    <div class="p-2 bg-green-500 bg-opacity-10 rounded-lg">
-                                        <i class="fas fa-check text-green-500"></i>
-                                    </div>
-                                    <div class="ml-3 flex-1">
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">Algorithm deployed successfully</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">2 minutes ago</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
-                                    <div class="p-2 bg-blue-500 bg-opacity-10 rounded-lg">
-                                        <i class="fas fa-info text-blue-500"></i>
-                                    </div>
-                                    <div class="ml-3 flex-1">
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">New data batch processed</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">15 minutes ago</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
-                                    <div class="p-2 bg-yellow-500 bg-opacity-10 rounded-lg">
-                                        <i class="fas fa-exclamation text-yellow-500"></i>
-                                    </div>
-                                    <div class="ml-3 flex-1">
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">Performance alert resolved</p>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">1 hour ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- Firebase Configuration -->
-    <script src="../firebase-config.js"></script>
+    <!-- Load shared scripts -->
+    <script src="shared/common.js"></script>
+    <script src="shared/spa-router.js"></script>
     
     <script>
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Authentication check
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                console.log('User authenticated:', user.email);
-                displayUserInfo(user);
-                checkEmailVerification(user);
-            } else {
-                console.log('User not authenticated, showing guest mode');
-                // Allow access to dashboard even without authentication
-                displayGuestInfo();
-            }
-        });
-
-        // Display guest information when not authenticated
-        function displayGuestInfo() {
-            const userName = document.getElementById('user-name');
-            const userEmail = document.getElementById('user-email');
-            const userInitials = document.getElementById('userInitials');
-            const userInitialsSidebar = document.getElementById('userInitialsSidebar');
-
-            if (userName) userName.textContent = 'Guest User';
-            if (userEmail) userEmail.textContent = 'guest@sbam.ai';
-            if (userInitials) userInitials.textContent = 'GU';
-            if (userInitialsSidebar) userInitialsSidebar.textContent = 'GU';
-            
-            // Hide email verification banner for guests
-            const banner = document.getElementById('verification-banner');
-            if (banner) banner.classList.add('hidden');
-        }
-
-        // Display user information
-        function displayUserInfo(user) {
-            const userName = document.getElementById('user-name');
-            const userEmail = document.getElementById('user-email');
-            const userInitials = document.getElementById('userInitials');
-            const userInitialsSidebar = document.getElementById('userInitialsSidebar');
-
-            const displayName = user.displayName || user.email.split('@')[0];
-            if (userName) userName.textContent = displayName;
-            if (userEmail) userEmail.textContent = user.email;
-            
-            // Generate initials
-            let initials = '';
-            if (user.displayName) {
-                initials = user.displayName.split(' ')
-                    .filter(name => name.length > 0)
-                    .map(name => name.charAt(0).toUpperCase())
-                    .join('')
-                    .substring(0, 2);
-            } else {
-                const emailUsername = user.email.split('@')[0];
-                initials = emailUsername.substring(0, 2).toUpperCase();
-            }
-            
-            if (initials.length === 0) {
-                initials = user.email.charAt(0).toUpperCase();
-            }
-            
-            if (userInitials) userInitials.textContent = initials;
-            if (userInitialsSidebar) userInitialsSidebar.textContent = initials;
-        }
-
-        // Email verification check
-        function checkEmailVerification(user) {
-            const banner = document.getElementById('verification-banner');
-            if (banner) {
-                if (!user.emailVerified) {
-                    banner.classList.remove('hidden');
-                } else {
-                    banner.classList.add('hidden');
-                }
-            }
-        }
-
-        // Mobile menu functionality
-        function initializeMobileMenu() {
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const closeSidebarBtn = document.getElementById('close-sidebar');
-            const sidebar = document.getElementById('sidebar');
-            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-            
-            function openMobileMenu() {
-                sidebar.classList.remove('-translate-x-full');
-                mobileMenuOverlay.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeMobileMenu() {
-                sidebar.classList.add('-translate-x-full');
-                mobileMenuOverlay.classList.add('hidden');
-                document.body.style.overflow = '';
-            }
-            
-            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileMenu);
-            if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeMobileMenu);
-            if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', closeMobileMenu);
-        }
-
-        // Theme Management
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('sbam-theme') || 'system';
-            setTheme(savedTheme);
-            updateThemeButtons(savedTheme);
-        }
-
-        function setTheme(theme) {
-            localStorage.setItem('sbam-theme', theme);
-            
-            if (theme === 'system') {
-                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                applyTheme(systemDark ? 'dark' : 'light');
-            } else {
-                applyTheme(theme);
-            }
-            
-            updateThemeButtons(theme);
-        }
-
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
-
-        function updateThemeButtons(activeTheme) {
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            const activeBtn = document.getElementById(`theme-${activeTheme}`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-            }
-        }
-
-        // Logout functionality
-        function initializeLogout() {
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', async () => {
-                    try {
-                        await auth.signOut();
-                        window.location.href = '../main-site/';
-                    } catch (error) {
-                        console.error('Logout error:', error);
-                        alert('Logout failed: ' + error.message);
-                    }
-                });
-            }
-        }
-
-        // Initialize everything when DOM is ready
+        // Wait for Firebase to be ready before initializing SPA
         document.addEventListener('DOMContentLoaded', function() {
-            initializeMobileMenu();
-            initializeTheme();
-            initializeLogout();
-            
-            // Theme button event listeners
-            const lightBtn = document.getElementById('theme-light');
-            const darkBtn = document.getElementById('theme-dark');
-            const systemBtn = document.getElementById('theme-system');
-            
-            if (lightBtn) lightBtn.addEventListener('click', () => setTheme('light'));
-            if (darkBtn) darkBtn.addEventListener('click', () => setTheme('dark'));
-            if (systemBtn) systemBtn.addEventListener('click', () => setTheme('system'));
+            // Check if Firebase is loaded
+            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                initializeSPA();
+            } else {
+                // Wait a bit more for Firebase to load
+                setTimeout(() => {
+                    initializeSPA();
+                }, 500);
+            }
         });
     </script>
 </body>
