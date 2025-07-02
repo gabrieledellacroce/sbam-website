@@ -715,10 +715,45 @@ function initializeSPA() {
         console.log('Logout initialized');
     }
 
-    // Initial page load
+    // Initial page load - determine page from URL path
     console.log('Loading initial page...');
-    const initialPage = window.location.hash.substring(1) || 'dashboard';
+    const path = window.location.pathname;
+    let initialPage = 'dashboard';
+    
+    if (path.includes('/dashboard/algo')) {
+        initialPage = 'algo';
+    } else if (path.includes('/dashboard/analytics')) {
+        initialPage = 'analytics';
+    } else if (path.includes('/dashboard/settings')) {
+        initialPage = 'settings';
+    }
+    
+    console.log('Initial page determined:', initialPage);
     navigateToPage(initialPage);
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.page) {
+            console.log('Popstate event - navigating to:', event.state.page);
+            currentPage = event.state.page;
+            
+            // Update page title
+            document.getElementById('page-title').textContent = pageContents[currentPage].title;
+            document.title = `SBAM Dashboard - ${pageContents[currentPage].title}`;
+            
+            // Update content
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.innerHTML = pageContents[currentPage].content;
+            }
+            
+            // Update navigation active state
+            updateNavigationState(currentPage);
+            
+            // Initialize page-specific functionality
+            initializePageSpecificFeatures(currentPage);
+        }
+    });
 
     // Hide loading screen
     console.log('Hiding loading screen...');
