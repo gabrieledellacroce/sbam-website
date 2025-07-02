@@ -883,152 +883,54 @@ function closeMobileMenu() {
 
 // Initialize SPA
 function initializeSPA() {
+    // Determine the initial page from the URL
+    const path = window.location.pathname;
+    let initialPage = 'dashboard'; // Default page
+    if (path.includes('/algo/')) {
+        initialPage = 'algo';
+    } else if (path.includes('/analytics/')) {
+        initialPage = 'analytics';
+    } else if (path.includes('/settings/')) {
+        initialPage = 'settings';
+    }
+
+    // Load the initial page content
+    loadPageContent(initialPage, true); // `true` for initial load
+
+    // Initialize UI components after the layout is in place
+    initializeMobileMenu();
+    initializeMobileSearch();
+    initializeTheme(); // Initialize theme management
+    setupLogout();
+
+    // Add event listeners to all navigation links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = link.getAttribute('data-page');
+            navigateToPage(page);
+        });
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.page) {
+            loadPageContent(event.state.page, false, false); // Don't push state again
+        } else {
+            // Handle initial state (e.g., when going back to the very first page)
+            loadPageContent(initialPage, false, false);
+        }
+    });
+
     // Hide loading screen
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
-        loadingScreen.style.display = 'none';
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => loadingScreen.style.display = 'none', 300);
     }
-    
-    // Insert mobile overlays
-    document.body.insertAdjacentHTML('afterbegin', mobileOverlaysTemplate);
-    
-    // Insert header
-    document.body.insertAdjacentHTML('afterbegin', headerTemplate);
-    
-    // Create main container
-    const mainContainer = document.createElement('div');
-    mainContainer.className = 'flex min-h-screen pt-16';
-    
-    // Insert sidebar
-    mainContainer.innerHTML = sidebarTemplate;
-    
-    // Create content area
-    const contentArea = document.createElement('div');
-    contentArea.className = 'flex-1 flex flex-col lg:ml-64';
-    contentArea.innerHTML = `
-        <main id="main-content" class="min-h-screen overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-            <!-- Content will be inserted here -->
-        </main>
-    `;
-    
-    mainContainer.appendChild(contentArea);
-    document.body.appendChild(mainContainer);
-    
-    // Determine initial page from URL
-    const path = window.location.pathname;
-    let initialPage = 'dashboard';
-    
-    if (path.includes('/algo')) initialPage = 'algo';
-    else if (path.includes('/analytics')) initialPage = 'analytics';
-    else if (path.includes('/settings')) initialPage = 'settings';
-    
-    // Load initial page
-    navigateToPage(initialPage);
-    
-    // Initialize event listeners
-    initializeEventListeners();
-    
-    // Initialize dashboard functionality from common.js
-    if (typeof initializeDashboard === 'function') {
-        initializeDashboard(initialPage);
-    }
-    
-    // Setup theme controls after DOM is ready
-    setTimeout(() => {
-        if (typeof setupThemeControls === 'function') {
-            setupThemeControls();
-        }
-    }, 50);
-    
-    // Update user info after DOM is ready
-    setTimeout(() => {
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-            firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                    if (typeof displayUserInfo === 'function') {
-                        displayUserInfo();
-                    }
-                } else {
-                    if (typeof displayGuestInfo === 'function') {
-                        displayGuestInfo();
-                    }
-                }
-            });
-        }
-    }, 100);
-    
-    // Show content
-    document.body.classList.add('access-granted');
 }
 
-// Initialize all event listeners
-function initializeEventListeners() {
-    // Mobile menu
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const closeSidebarBtn = document.getElementById('close-sidebar');
-    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-    
-    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileMenu);
-    if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeMobileMenu);
-    if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', closeMobileMenu);
-    
-    // Mobile search
-    const mobileSearchBtn = document.getElementById('mobile-search-btn');
-    const closeMobileSearchBtn = document.getElementById('close-mobile-search');
-    const mobileSearchOverlay = document.getElementById('mobile-search-overlay');
-    
-    if (mobileSearchBtn) {
-        mobileSearchBtn.addEventListener('click', () => {
-            if (mobileSearchOverlay) {
-                mobileSearchOverlay.classList.remove('translate-y-full');
-            }
-        });
-    }
-    
-    if (closeMobileSearchBtn) {
-        closeMobileSearchBtn.addEventListener('click', () => {
-            if (mobileSearchOverlay) {
-                mobileSearchOverlay.classList.add('translate-y-full');
-            }
-        });
-    }
-    
-    // Theme buttons - handled by common.js setupThemeControls()
-    // No need to set up theme listeners here
-    
-    // Logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to logout?')) {
-                // Implement logout functionality
-                window.location.href = '../auth/';
-            }
-        });
-    }
-    
-    // Handle browser back/forward
-    window.addEventListener('popstate', (event) => {
-        if (event.state && event.state.page) {
-            navigateToPage(event.state.page);
-        }
-    });
-}
-
-// Theme management - now handled by common.js
-function initializeTheme() {
-    // Theme management is now handled by common.js setupThemeControls()
-    console.log('Theme initialization delegated to common.js');
-}
-
-// Initialize user info - now handled by common.js Firebase Auth
-function initializeUserInfo() {
-    // User info is now handled by Firebase Auth in common.js
-    // The displayUserInfo and displayGuestInfo functions will be called automatically
-    console.log('User info initialization delegated to common.js Firebase Auth');
-}
-
-// Export functions for global access
+// Make navigateToPage globally accessible
 window.navigateToPage = navigateToPage;
 window.initializeSPA = initializeSPA;
 window.initializeTheme = initializeTheme;

@@ -190,61 +190,57 @@ function initializeMobileSearch() {
 
 // Theme Management
 function initializeTheme() {
-    const savedTheme = localStorage.getItem('sbam-theme') || 'system';
-    setTheme(savedTheme);
-    updateThemeButtons(savedTheme);
-    
-    // Listen for system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-        if (localStorage.getItem('sbam-theme') === 'system') {
-            applyTheme(e.matches ? 'dark' : 'light');
-        }
-    });
-}
-
-function setTheme(theme) {
-    localStorage.setItem('sbam-theme', theme);
-    
-    if (theme === 'system') {
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        applyTheme(systemDark ? 'dark' : 'light');
-    } else {
-        applyTheme(theme);
-    }
-    
-    updateThemeButtons(theme);
-}
-
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
-}
-
-function updateThemeButtons(activeTheme) {
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    const activeBtn = document.getElementById(`theme-${activeTheme}`);
-    if (activeBtn) {
-        activeBtn.classList.add('active');
-    }
-}
-
-// Initialize theme and event listeners
-function setupThemeControls() {
-    initializeTheme();
-    
     const lightBtn = document.getElementById('theme-light');
     const darkBtn = document.getElementById('theme-dark');
     const systemBtn = document.getElementById('theme-system');
-    
+    const buttons = [lightBtn, darkBtn, systemBtn];
+
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
+    function updateButtonStyles(activeTheme) {
+        buttons.forEach(btn => {
+            if (btn) {
+                btn.classList.remove('active');
+                if (btn.id === `theme-${activeTheme}`) {
+                    btn.classList.add('active');
+                }
+            }
+        });
+    }
+
+    function setTheme(theme) {
+        if (theme === 'system') {
+            localStorage.removeItem('sbam-theme');
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(systemDark ? 'dark' : 'light');
+        } else {
+            localStorage.setItem('sbam-theme', theme);
+            applyTheme(theme);
+        }
+        updateButtonStyles(theme);
+    }
+
+    // Initial theme setup
+    const savedTheme = localStorage.getItem('sbam-theme') || 'system';
+    setTheme(savedTheme);
+
+    // Event Listeners
     if (lightBtn) lightBtn.addEventListener('click', () => setTheme('light'));
     if (darkBtn) darkBtn.addEventListener('click', () => setTheme('dark'));
     if (systemBtn) systemBtn.addEventListener('click', () => setTheme('system'));
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (localStorage.getItem('sbam-theme') === null || localStorage.getItem('sbam-theme') === 'system') {
+            applyTheme(e.matches ? 'dark' : 'light');
+        }
+    });
 }
 
 // Logout functionality
