@@ -146,14 +146,7 @@ function initializeMobileMenu() {
     });
 }
 
-// Make functions globally accessible
-window.displayUserInfo = displayUserInfo;
-window.displayGuestInfo = displayGuestInfo;
-window.initializeMobileMenu = initializeMobileMenu;
-window.initializeMobileSearch = initializeMobileSearch;
-window.initializeTheme = initializeTheme;
-window.initializeLogout = initializeLogout;
-window.setActiveNavigation = setActiveNavigation;
+
 
 // Mobile search functionality
 function initializeMobileSearch() {
@@ -294,45 +287,24 @@ function setActiveNavigation(currentPage) {
     }
 }
 
-// Initialize all dashboard functionality
-function initializeDashboard(currentPage = 'dashboard') {
-    initializeMobileMenu();
-    initializeMobileSearch();
-    setupThemeControls();
-    initializeLogout();
-    setActiveNavigation(currentPage);
-}
-
-// Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        // Try to determine current page from URL
-        const path = window.location.pathname;
-        let currentPage = 'dashboard';
-        
-        if (path.includes('/analytics')) currentPage = 'analytics';
-        else if (path.includes('/algo')) currentPage = 'algo';
-        else if (path.includes('/settings')) currentPage = 'settings';
-        
-        initializeDashboard(currentPage);
-    });
-} else {
-    const path = window.location.pathname;
-    let currentPage = 'dashboard';
-    
-    if (path.includes('/analytics')) currentPage = 'analytics';
-    else if (path.includes('/algo')) currentPage = 'algo';
-    else if (path.includes('/settings')) currentPage = 'settings';
-    
-    initializeDashboard(currentPage);
-}
+// Make functions globally accessible
+window.displayUserInfo = displayUserInfo;
+window.displayGuestInfo = displayGuestInfo;
+window.initializeMobileMenu = initializeMobileMenu;
+window.initializeMobileSearch = initializeMobileSearch;
+window.initializeTheme = initializeTheme;
+window.initializeLogout = initializeLogout;
+window.setActiveNavigation = setActiveNavigation;
 
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        initializeDashboard,
-        setupThemeControls,
         displayUserInfo,
+        initializeMobileMenu,
+        initializeMobileSearch,
+        initializeTheme,
+        initializeLogout,
+        setActiveNavigation,
         auth,
         db
     };

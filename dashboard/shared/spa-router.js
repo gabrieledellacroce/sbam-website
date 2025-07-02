@@ -910,8 +910,6 @@ function initializeSPA() {
 // Make navigateToPage globally accessible
 window.navigateToPage = navigateToPage;
 window.initializeSPA = initializeSPA;
-window.initializeTheme = initializeTheme;
-window.initializeUserInfo = initializeUserInfo;
 
 // Note: SPA initialization is now handled by index.html
 // to ensure proper Firebase loading order
