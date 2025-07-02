@@ -149,6 +149,11 @@ function initializeMobileMenu() {
 // Make functions globally accessible
 window.displayUserInfo = displayUserInfo;
 window.displayGuestInfo = displayGuestInfo;
+window.initializeMobileMenu = initializeMobileMenu;
+window.initializeMobileSearch = initializeMobileSearch;
+window.initializeTheme = initializeTheme;
+window.initializeLogout = initializeLogout;
+window.setActiveNavigation = setActiveNavigation;
 
 // Mobile search functionality
 function initializeMobileSearch() {

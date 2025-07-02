@@ -881,52 +881,29 @@ function closeMobileMenu() {
     }
 }
 
-// Initialize SPA
+// Initialize the SPA
 function initializeSPA() {
-    // Determine the initial page from the URL
-    const path = window.location.pathname;
-    let initialPage = 'dashboard'; // Default page
-    if (path.includes('/algo/')) {
-        initialPage = 'algo';
-    } else if (path.includes('/analytics/')) {
-        initialPage = 'analytics';
-    } else if (path.includes('/settings/')) {
-        initialPage = 'settings';
+    // Initialize layout components
+    if (typeof initializeDashboardLayout !== 'undefined') {
+        initializeDashboardLayout();
+    } else {
+        console.error('Error: initializeDashboardLayout function not found.');
     }
 
-    // Load the initial page content
-    loadPageContent(initialPage, true); // `true` for initial load
+    // Initialize common functionalities
+    if (typeof initializeMobileMenu !== 'undefined') initializeMobileMenu();
+    if (typeof initializeMobileSearch !== 'undefined') initializeMobileSearch();
+    if (typeof initializeTheme !== 'undefined') initializeTheme();
+    if (typeof initializeLogout !== 'undefined') initializeLogout();
 
-    // Initialize UI components after the layout is in place
-    initializeMobileMenu();
-    initializeMobileSearch();
-    initializeTheme(); // Initialize theme management
-    setupLogout();
-
-    // Add event listeners to all navigation links
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = link.getAttribute('data-page');
-            navigateToPage(page);
-        });
-    });
-
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', (event) => {
-        if (event.state && event.state.page) {
-            loadPageContent(event.state.page, false, false); // Don't push state again
-        } else {
-            // Handle initial state (e.g., when going back to the very first page)
-            loadPageContent(initialPage, false, false);
-        }
-    });
+    // Initial page load
+    const initialPage = window.location.hash.substring(1) || 'dashboard';
+    navigateToPage(initialPage);
 
     // Hide loading screen
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
-        loadingScreen.style.opacity = '0';
-        setTimeout(() => loadingScreen.style.display = 'none', 300);
+        loadingScreen.style.display = 'none';
     }
 }
 
