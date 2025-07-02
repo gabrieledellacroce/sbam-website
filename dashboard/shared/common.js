@@ -296,6 +296,29 @@ window.initializeTheme = initializeTheme;
 window.initializeLogout = initializeLogout;
 window.setActiveNavigation = setActiveNavigation;
 
+// Expose mobile menu functions globally
+window.openMobileMenu = function() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+window.closeMobileMenu = function() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+};
+
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {

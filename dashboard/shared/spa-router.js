@@ -1,29 +1,5 @@
 // SPA Router for SBAM Dashboard
 
-// Add theme button styles
-const themeStyles = document.createElement('style');
-themeStyles.textContent = `
-    .theme-btn {
-        color: #6b7280;
-        background-color: transparent;
-    }
-    
-    .theme-btn.active {
-        color: #E738C7 !important;
-        background-color: rgba(231, 56, 199, 0.1) !important;
-    }
-    
-    .dark .theme-btn {
-        color: #9ca3af;
-    }
-    
-    .dark .theme-btn.active {
-        color: #E738C7 !important;
-        background-color: rgba(231, 56, 199, 0.2) !important;
-    }
-`;
-document.head.appendChild(themeStyles);
-
 // Page content definitions
 const pageContents = {
     dashboard: {
@@ -787,7 +763,9 @@ function navigateToPage(page) {
         }
         
         // Close mobile menu if open
-        closeMobileMenu();
+        if (typeof window.closeMobileMenu === 'function') {
+            window.closeMobileMenu();
+        }
         
         // Initialize page-specific functionality
         initializePageSpecificFeatures(page);
@@ -858,28 +836,7 @@ function initializeSettingsTabs() {
     });
 }
 
-// Mobile menu functions
-function openMobileMenu() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('mobile-menu-overlay');
-    
-    if (sidebar && overlay) {
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeMobileMenu() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('mobile-menu-overlay');
-    
-    if (sidebar && overlay) {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-}
+// Mobile menu functions are handled by common.js
 
 // Initialize the SPA
 function initializeSPA() {
