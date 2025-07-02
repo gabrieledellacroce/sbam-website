@@ -883,28 +883,49 @@ function closeMobileMenu() {
 
 // Initialize the SPA
 function initializeSPA() {
+    console.log('Starting SPA initialization...');
+    
     // Initialize layout components
     if (typeof initializeDashboardLayout !== 'undefined') {
+        console.log('Initializing dashboard layout...');
         initializeDashboardLayout();
     } else {
         console.error('Error: initializeDashboardLayout function not found.');
+        return;
     }
 
     // Initialize common functionalities
-    if (typeof initializeMobileMenu !== 'undefined') initializeMobileMenu();
-    if (typeof initializeMobileSearch !== 'undefined') initializeMobileSearch();
-    if (typeof initializeTheme !== 'undefined') initializeTheme();
-    if (typeof initializeLogout !== 'undefined') initializeLogout();
+    console.log('Initializing common functionalities...');
+    if (typeof initializeMobileMenu !== 'undefined') {
+        initializeMobileMenu();
+        console.log('Mobile menu initialized');
+    }
+    if (typeof initializeMobileSearch !== 'undefined') {
+        initializeMobileSearch();
+        console.log('Mobile search initialized');
+    }
+    if (typeof initializeTheme !== 'undefined') {
+        initializeTheme();
+        console.log('Theme initialized');
+    }
+    if (typeof initializeLogout !== 'undefined') {
+        initializeLogout();
+        console.log('Logout initialized');
+    }
 
     // Initial page load
+    console.log('Loading initial page...');
     const initialPage = window.location.hash.substring(1) || 'dashboard';
     navigateToPage(initialPage);
 
     // Hide loading screen
+    console.log('Hiding loading screen...');
     const loadingScreen = document.getElementById('loading-screen');
     if (loadingScreen) {
         loadingScreen.style.display = 'none';
     }
+    
+    console.log('SPA initialization complete!');
 }
 
 // Make navigateToPage globally accessible

@@ -138,16 +138,59 @@
     <script src="shared/spa-router.js"></script>
     
     <script>
+        // Debug logging
+        console.log('Starting dashboard initialization...');
+        
+        // Check if all required functions are loaded
+        function checkDependencies() {
+            console.log('Checking dependencies...');
+            console.log('Firebase available:', typeof firebase !== 'undefined');
+            console.log('initializeDashboardLayout available:', typeof initializeDashboardLayout !== 'undefined');
+            console.log('initializeSPA available:', typeof initializeSPA !== 'undefined');
+            console.log('initializeMobileMenu available:', typeof initializeMobileMenu !== 'undefined');
+            console.log('initializeTheme available:', typeof initializeTheme !== 'undefined');
+        }
+        
+        // Wait for all scripts to load before initializing
+        function waitForScripts() {
+            return new Promise((resolve) => {
+                function check() {
+                    if (typeof initializeDashboardLayout !== 'undefined' && 
+                        typeof initializeSPA !== 'undefined' && 
+                        typeof firebase !== 'undefined') {
+                        resolve();
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                }
+                check();
+            });
+        }
+        
         // Wait for Firebase to be ready before initializing SPA
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if Firebase is loaded
-            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-                initializeSPA();
-            } else {
-                // Wait a bit more for Firebase to load
-                setTimeout(() => {
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('DOM loaded, waiting for scripts...');
+            
+            try {
+                await waitForScripts();
+                console.log('All scripts loaded, checking dependencies...');
+                checkDependencies();
+                
+                // Check if Firebase is loaded
+                if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                    console.log('Firebase ready, initializing SPA...');
                     initializeSPA();
-                }, 500);
+                } else {
+                    console.log('Firebase not ready, waiting...');
+                    // Wait a bit more for Firebase to load
+                    setTimeout(() => {
+                        console.log('Timeout reached, checking again...');
+                        checkDependencies();
+                        initializeSPA();
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('Error during initialization:', error);
             }
         });
     </script>
