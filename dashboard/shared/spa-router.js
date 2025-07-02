@@ -606,12 +606,33 @@ function navigateToPage(page) {
         }
         
         // Close mobile menu if open
-        if (typeof window.closeMobileMenu === 'function') {
-            window.closeMobileMenu();
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-menu-overlay');
+        
+        if (sidebar && overlay && !sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
         }
         
         // Initialize page-specific functionality
         initializePageSpecificFeatures(page);
+        
+        // Reinitialize all event listeners to ensure they work after navigation
+        setTimeout(() => {
+            if (typeof initializeMobileMenu === 'function') {
+                initializeMobileMenu();
+            }
+            if (typeof initializeMobileSearch === 'function') {
+                initializeMobileSearch();
+            }
+            if (typeof initializeTheme === 'function') {
+                initializeTheme();
+            }
+            if (typeof initializeLogout === 'function') {
+                initializeLogout();
+            }
+        }, 50);
         
         // Update URL without page reload
         const newUrl = page === 'dashboard' ? '/dashboard/' : `/dashboard/${page}/`;

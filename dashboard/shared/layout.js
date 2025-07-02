@@ -209,6 +209,29 @@ function initializeDashboardLayout(pageTitle = 'Dashboard', currentPage = 'dashb
         }
     });
     
+    // Initialize all event listeners after DOM is ready
+    setTimeout(() => {
+        // Initialize mobile menu
+        if (typeof initializeMobileMenu === 'function') {
+            initializeMobileMenu();
+        }
+        
+        // Initialize mobile search
+        if (typeof initializeMobileSearch === 'function') {
+            initializeMobileSearch();
+        }
+        
+        // Initialize theme management
+        if (typeof initializeTheme === 'function') {
+            initializeTheme();
+        }
+        
+        // Initialize logout functionality
+        if (typeof initializeLogout === 'function') {
+            initializeLogout();
+        }
+    }, 100);
+    
     // Initialize dashboard functionality
     if (typeof initializeDashboard === 'function') {
         initializeDashboard(currentPage);
