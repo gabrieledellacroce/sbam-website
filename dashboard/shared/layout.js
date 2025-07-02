@@ -216,3 +216,6 @@ function initializeDashboardLayout(pageTitle = 'Dashboard', currentPage = 'dashb
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { initializeDashboardLayout };
 }
+
+// Make function globally accessible
+window.initializeDashboardLayout = initializeDashboardLayout;
