@@ -622,7 +622,8 @@ function navigateToPage(page) {
 // Update navigation active state
 function updateNavigationState(activePage) {
     document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
+        link.classList.remove('bg-primary', 'bg-opacity-10', 'text-primary');
+        link.classList.add('text-gray-700', 'dark:text-gray-300');
         const icon = link.querySelector('i');
         if (icon) {
             icon.classList.remove('text-primary');
@@ -632,7 +633,8 @@ function updateNavigationState(activePage) {
     
     const activeLink = document.querySelector(`[data-page="${activePage}"]`);
     if (activeLink) {
-        activeLink.classList.add('active');
+        activeLink.classList.add('bg-primary', 'bg-opacity-10', 'text-primary');
+        activeLink.classList.remove('text-gray-700', 'dark:text-gray-300');
         const icon = activeLink.querySelector('i');
         if (icon) {
             icon.classList.remove('text-gray-500');

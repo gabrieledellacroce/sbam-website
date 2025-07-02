@@ -69,21 +69,27 @@ const sidebarTemplate = `
         <nav class="flex-1 px-4 py-6 lg:pt-8">
             <ul class="space-y-2">
                 <li>
-                    <a href="../" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="dashboard">
+                    <a href="#" onclick="navigateToPage('dashboard'); return false;" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="dashboard">
                         <i class="fas fa-home text-gray-500 group-hover:text-primary mr-3"></i>
                         <span class="font-medium">Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="../algo/" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="algo">
+                    <a href="#" onclick="navigateToPage('algo'); return false;" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="algo">
                         <i class="fas fa-robot text-gray-500 group-hover:text-primary mr-3"></i>
                         <span class="font-medium">Algorithms</span>
                     </a>
                 </li>
                 <li>
-                    <a href="../analytics/" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="analytics">
+                    <a href="#" onclick="navigateToPage('analytics'); return false;" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="analytics">
                         <i class="fas fa-chart-bar text-gray-500 group-hover:text-primary mr-3"></i>
                         <span class="font-medium">Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="navigateToPage('settings'); return false;" class="nav-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" data-page="settings">
+                        <i class="fas fa-cog text-gray-500 group-hover:text-primary mr-3"></i>
+                        <span class="font-medium">Settings</span>
                     </a>
                 </li>
 
@@ -120,12 +126,9 @@ const sidebarTemplate = `
                 </div>
             </div>
             
-            <!-- Settings and Logout -->
+            <!-- Logout -->
             <div class="mb-3">
-                <a href="../settings/" class="flex items-center px-3 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-sm font-medium transition-colors">
-                    <i class="fas fa-cog mr-2"></i>Settings
-                </a>
-                <button id="logout-btn" class="w-full flex items-center px-3 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-sm font-medium transition-colors mt-1">
+                <button id="logout-btn" class="w-full flex items-center px-3 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-sm font-medium transition-colors">
                     <i class="fas fa-sign-out-alt mr-2"></i>Logout
                 </button>
             </div>
